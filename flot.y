@@ -30,16 +30,21 @@ void comment(const char *);
 %token SUP
 %token INF
 
-%left NOELSE
-%left ELSE
-%left '+'
-%left '*'
+%left BOPE
+%left COMP
+%left ADDSUB
+%left DIVSTAR
+%left NEGATION
+%left ADDSUB
 
 %%
-PROGRAMME : /* rien */ | PROGRAMME INSTRUCTION 
-       ;
-INSTRUCTION : PRINT /*E*/ ';' { inst("POP"); inst("WRITE");	comment("---affichage"); }
-    ;
+Prog : DeclConst DeclVarPuisFonct DeclMain
+	;
+DeclConst : DeclConst CONST ListConst PV
+	| /* Epsilon*/
+	;
+ListConst : ListConst VRG IDENT EGAL Litteral
+	| IDENT EGAL Litteral
 %%
 
 int yyerror(char* s) {
