@@ -45,40 +45,79 @@
 
 %%
 Prog : DeclConst DeclVarPuisFonct DeclMain
+	;
 
 DeclConst : DeclConst CONST ListConst PV
     | /*Epsilon */
+    ;
+    
 ListConst : ListConst VRG IDENT EGAL Litteral
     | IDENT EGAL Litteral
+    ;
+    
 Litteral : NombreSigne
     | CARACTERE
+    ;
+    
 NombreSigne : NUM
     | ADDSUB NUM
+    ;
+    
 DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct
     | DeclFonct
     | /*Epsilon */
+    ;
+    
 ListVar : ListVar VRG Ident
     | Ident
+    ;
+    
 Ident : IDENT Tab
+	;
+	
 Tab : Tab LSQB ENTIER RSQB
     | /*Epsilon */
+    ;
+    
 DeclMain : EnTeteMain Corps
+	;
+	
 EnTeteMain : MAIN LPAR RPAR
+	;
+	
 DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
+    ;
+    
 DeclUneFonct : EnTeteFonct Corps
+	;
+	
 EnTeteFonct : TYPE IDENT LPAR Parametres RPAR
     | VOID IDENT LPAR Parametres RPAR
+    ;
+    
 Parametres : VOID
     | ListTypVar
+    ;
+    
 ListTypVar : ListTypVar VRG TYPE IDENT
     | TYPE IDENT
+    ;
+    
 Corps : LACC DeclConst DeclVar SuiteInstr RACC
+	;
+	
 DeclVar : DeclVar TYPE ListVar PV
     | /*Epsilon */
+    ;
+    
 SuiteInstr : SuiteInstr Instr
     | /*Epsilon */
+    ;
+    
 InstrComp : LACC SuiteInstr RACC
+	;
+	
 Instr : LValue EGAL Exp PV
     | IF LPAR Exp RPAR Instr
     | IF LPAR Exp RPAR Instr ELSE Instr
@@ -91,13 +130,23 @@ Instr : LValue EGAL Exp PV
     | PRINT LPAR Exp RPAR PV
     | PV
     | InstrComp
+    ;
+    
 Arguments : ListExp
     | /*Epsilon */
+    ;
+    
 LValue : IDENT TabExp
+	;
+	
 TabExp : TabExp LSQB Exp RSQB
     | /*Epsilon */
+    ;
+    
 ListExp : ListExp VRG Exp
     | Exp
+    ;
+    
 Exp : Exp ADDSUB Exp
     | Exp DIVSTAR Exp
     | Exp COMP Exp
@@ -109,6 +158,8 @@ Exp : Exp ADDSUB Exp
     | NUM
     | CARACTERE
     | IDENT LPAR Arguments RPAR
+    ;
+    
 %%
 
 int yyerror(char* s) {
