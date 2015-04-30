@@ -8,34 +8,40 @@
     int yyerror(char*);
     int yylex();
     FILE* yyin;
-    int yylval;
+//    int yylval;
     int jump_label = 0;
     void inst(const char *);
     void instarg(const char *, int);
     void comment(const char *);
     /*Personnal functions*/
 %}
-
-%token IF
-%token PRINT
-%token NOMBRE_ENTIER
-%token ELSE
-%token AO
-%token AF
-%token WHILE
-%token EE
-%token SE
-%token IE
-%token NE
-%token SUP
-%token INF
+%union {
+    char cval;
+    char * sval;
+    char * svalt;
+    char * svalcmp;
+    char * svalas;
+    char * svalds;
+    int signedint;
+    int usint;
+}
+%token NEGATION CONST EGAL PV VRG LPAR RPAR LACC RACC 
+%token IF PRINT ELSE WHILE MAIN READ READCH RETURN VOID LSQB RSQB
+%token <cval> CARACTERE
+%token <signedint> ENTIER
+%token <sval> IDENT
+%token <usint> NUM
+%token <svalas> ADDSUB
+%token <svalcmp> COMP
+%token <svalt> TYPE
+%token <svalds> DIVSTAR
+%token <svalb> BOPE 
 
 %left BOPE
 %left COMP
 %left ADDSUB
 %left DIVSTAR
 %left NEGATION
-%left ADDSUB
 
 %%
 Prog : DeclConst DeclVarPuisFonct DeclMain
@@ -103,7 +109,7 @@ Exp : Exp ADDSUB Exp
     | NUM
     | CARACTERE
     | IDENT LPAR Arguments RPAR
-% %
+%%
 
 int yyerror(char* s) {
     fprintf(stderr, "%s\n", s);

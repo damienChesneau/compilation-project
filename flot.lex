@@ -9,15 +9,15 @@ chiffre10 [0-9]
 %%
         
 [ \t\n]+ ;
-['a'-'z']| ['A'-'Z'] {sscanf(yytext,"%c",&yylval); return CARACTERE;}
-[0-9]+ { sscanf(yytext,"%d",&yylval); return NUM;}
-{lettre}(_|{lettre}|{chiffre10})* { sscanf(yytext,"%s",&yylval.id); return IDENT;}
-"entier" { sscanf(yytext,"%s",&yylval.id); return TYPE;}
-"caractere" { sscanf(yytext,"%s",&yylval.id); return TYPE;}
-"==" | ">" | "<" | ">=" | "<=" | "!=" { sscanf(yytext,"%s",&yylval.id); return COMP;}
-"+"|"-" { sscanf(yytext,"%s",&yylval.id); return ADDSUB;}
-"*"| "/" | "%" { sscanf(yytext,"%s",&yylval.id); return DIVSTAR;}
-"&&" | "||" { sscanf(yytext,"%s",&yylval.id); return BOPE;}
+^lettre$ {sscanf(yytext,"%c",&yylval.cval); return CARACTERE;}
+[0-9]+ { sscanf(yytext,"%d",&yylval.usint); return NUM;}
+{lettre}(_|{lettre}|{chiffre10})* { sscanf(yytext,"%s", yylval.sval); return IDENT;}
+"entier" { sscanf(yytext,"%s", yylval.svalt); return TYPE;}
+"caractere" { sscanf(yytext,"%s", yylval.svalt); return TYPE;}
+"==" | ">" | "<" | ">=" | "<=" | "!=" { sscanf(yytext,"%s",&yylval.svalcmp); return COMP;}
+"+"|"-" { sscanf(yytext,"%s",  yylval.svalas); return ADDSUB;}
+'*' | '/' |'%' { sscanf(yytext,"%s",&yylval.svalds); return DIVSTAR;}
+"&&" | "||" { sscanf(yytext,"%s",&yylval.svalbp); return BOPE;}
 "!" {return NEGATION;}
 "=" {return EGAL;}
 ";" {return PV;}
@@ -28,11 +28,16 @@ chiffre10 [0-9]
 "}" {return RACC;}
 "[" {return LSQB;}
 "]" {return RSQB;}
-
 "if" {return IF;}
 "print" {return PRINT;}
 "else" {return ELSE;}
 "while" {return WHILE;}
+^('-')?({chiffre10})*$ { sscanf(yytext,"%d",&yylval.signedint); return ENTIER;}
+"main" { return MAIN;}
+"readch" { return READCH; }
+"read" { return READ; }
+"return" { return RETURN; }
+"void" { return VOID; }
 
 . return yytext[0]; 
 %%
