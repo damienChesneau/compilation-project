@@ -1,16 +1,1 @@
-X = 10+1;
-while ( 9>=8) {
-    print X+20;
-    print 56;
-}
-if (4<8) 
-   if (5 > 3) {
-    print X+70;
-    print 5;
-   } else {
-    print 4;
-    print 58;
-   }
-if (12<5){
-    print 12;
-}
+main () {}

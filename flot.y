@@ -63,7 +63,7 @@ Ident : IDENT Tab
 Tab : Tab LSQB ENTIER RSQB
     | /*Epsilon */
 DeclMain : EnTeteMain Corps
-EnTeteMain : MAIN LPAR RPAR 
+EnTeteMain : MAIN LPAR RPAR
 DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
 DeclUneFonct : EnTeteFonct Corps
