@@ -7,15 +7,15 @@ chiffre10 [0-9]
 %option noyywrap
 /* evite d'utiliser -lfl */
 %%
-        
+
 [ \t\n]+ ;
 "main" { return MAIN;}
 "readch" { return READCH; }
 "read" { return READ; }
 "return" { return RETURN; }
 "void" { return VOID; }
-'*' |'/'|'%' { sscanf(yytext,"%s",&yylval.svalds); return DIVSTAR;}
-"&&" | "||" { sscanf(yytext,"%s",&yylval.svalbp); return BOPE;}
+("==")|(">=")|("<=")|("!=")|(">")|("<") { strncpy(yylval.svalcmp, yytext, yyleng); yylval.svalcmp[yyleng]='\0'; return COMP; }
+("&&") | ("||") { strncpy(yylval.svalbp, yytext, yyleng); yylval.svalcmp[yyleng]='\0'; return BOPE;}
 "!" {return NEGATION;}
 "=" {return EGAL;}
 ";" {return PV;}
@@ -30,13 +30,14 @@ chiffre10 [0-9]
 "print" {return PRINT;}
 "else" {return ELSE;}
 "while" {return WHILE;}
-"entier" { sscanf(yytext,"%s", yylval.svalt); return TYPE;}
-"caractere" { sscanf(yytext,"%s", yylval.svalt); return TYPE;}
-"==" | ">" | "<" | ">=" | "<=" | "!=" { sscanf(yytext,"%s",&yylval.svalcmp); return COMP;}
-"+"|"-" { sscanf(yytext,"%s",  yylval.svalas); return ADDSUB;}
+"entier" { strncpy(yylval.svalt, yytext, yyleng); yylval.svalt[yyleng]='\0'; return TYPE;}
+"caractere" { strncpy(yylval.svalt, yytext, yyleng); yylval.svalt[yyleng]='\0'; return TYPE;}
+
+("+")|("-") { strncpy(yylval.svalas, yytext, yyleng); yylval.svalas[yyleng]='\0'; return ADDSUB; }
+("*")|("/")|("%") { strncpy(yylval.svalds, yytext, yyleng); yylval.svalds[yyleng]='\0'; return DIVSTAR;}
 ^lettre$ {sscanf(yytext,"%c",&yylval.cval); return CARACTERE;}
 [0-9]+ { sscanf(yytext,"%d",&yylval.usint); return NUM;}
-{lettre}(_|{lettre}|{chiffre10})* { sscanf(yytext,"%s", yylval.sval); return IDENT;}
+{lettre}(_|{lettre}|{chiffre10})* { strncpy(yylval.sval,yytext,yyleng); yylval.sval[yyleng]='\0'; return IDENT;}
 ^('-')?({chiffre10})*$ { sscanf(yytext,"%d",&yylval.signedint); return ENTIER;}
 
 . return yytext[0]; 
