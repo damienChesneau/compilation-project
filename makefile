@@ -5,7 +5,7 @@ EXEC=flot
 
 all: $(EXEC) clean
 
-$(EXEC): $(EXEC).o foncTab.o lex.yy.o
+$(EXEC): $(EXEC).o foncTab.o lex.yy.o 
 	gcc  -o $@ $^ $(LDFLAGS) 
 
 $(EXEC).c: $(EXEC).y

@@ -9,6 +9,7 @@ int exp_bool_choice = 0;
 int type_of_exp = 0;/* 1 -> int | 2 -> char */
 Sym symboles[20];
 int indexOfSymboles = 0;
+char * function_in_use; /* define the name of current function. */
 
 int yyerror(char*);
 int yylex();
@@ -24,6 +25,7 @@ void switchExpBool(void);
 int jump_if(void);
 void div_star_term(char *as);
 void insertNewVar(char * id, int value);
+void replace_new_var(char * id);
 
 %}
 %union {
@@ -89,15 +91,16 @@ DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct
 ListVar : ListVar VRG Ident
     | Ident
     ;
-Ident : IDENT Tab 
+Ident : IDENT LSQB ENTIER RSQB
     | IDENT EGAL NUM { insertNewVar($1, $3); }
+    | IDENT { insertNewVar($1, 0); }
     ;
-	
-Tab : Tab LSQB ENTIER RSQB
-    | /*Epsilon */
-    ;
+	/*
+Tab : Tab 
+    | { insertNewVar($1, 0); }
+    ;*/
 
-DeclMain : EnTeteMain Corps
+DeclMain : EnTeteMain { function_in_use ="main\0"; } Corps { function_in_use = NULL; }
 	;
 
 EnTeteMain : MAIN LPAR RPAR
@@ -169,6 +172,7 @@ Arguments : ListExp
     ;
 
 LValue : IDENT TabExp
+| IDENT
 	;
 
 TabExp : TabExp LSQB Exp RSQB
@@ -197,12 +201,19 @@ ExpBool :
 
 %%
 
-void insertNewVar(char * id, int value){  
-    instarg("SET", 1);
+void insertNewVar(char * id, int value){ 
+    int newAddr =  getNewAddr(function_in_use, symboles, &indexOfSymboles);
+    instarg("SET", newAddr);
     inst("SWAP");
     instarg("SET", value);
-    inst("SAVER");
-    insert(id, type_of_exp, value, symboles, &indexOfSymboles);
+    inst("SAVER"); 
+    insert(id, type_of_exp, newAddr, symboles, &indexOfSymboles);
+}
+
+void replace_new_var(char * id){ 
+    int addr = getValue(id, symboles, indexOfSymboles);
+    instarg("SET", addr);
+    inst("LOADR"); 
 }
 
 //TOPST ALLOC
@@ -290,6 +301,7 @@ void comment(const char *s) {
 }
 
 int main(int argc, char** argv) {
+    instarg("ALLOC",20);
     if (argc == 2) {
         yyin = fopen(argv[1], "r");
     } else if (argc == 1) {

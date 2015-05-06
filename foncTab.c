@@ -1,9 +1,14 @@
 #include "foncTab.h"
 
 
-int getNewAddr(char * func_name){
-    
-    return 45;
+int getNewAddr(char * func_name, Sym s[], int * indexTab){
+    int i, new_addr = 0;
+    for(i = 0 ; i < *indexTab ; i++){ 
+	if(strcmp(s[i].loc_func_name, func_name) == 0){ 
+            new_addr++;
+        }
+    }
+    return new_addr;
 }
 void insert(char * id, int type, int addr, Sym s[], int * indexTab){
     if(sizeof(s) != TAB_SIZE && getValue(id,s, *indexTab) == -1){
