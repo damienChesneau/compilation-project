@@ -31,7 +31,9 @@ chiffre10 [0-9]
 "else" {return ELSE;}
 "while" {return WHILE;}
 "entier" { strncpy(yylval.svalt, yytext, yyleng); yylval.svalt[yyleng]='\0'; return TYPE;}
+"int" { strncpy(yylval.svalt, "entier", yyleng); yylval.svalt[yyleng]='\0'; return TYPE;}
 "caractere" { strncpy(yylval.svalt, yytext, yyleng); yylval.svalt[yyleng]='\0'; return TYPE;}
+"char" { strncpy(yylval.svalt, "caractere", yyleng); yylval.svalt[yyleng]='\0'; return TYPE;}
 
 ("+")|("-") { strncpy(yylval.svalas, yytext, yyleng); yylval.svalas[yyleng]='\0'; return ADDSUB; }
 ("*")|("/")|("%") { strncpy(yylval.svalds, yytext, yyleng); yylval.svalds[yyleng]='\0'; return DIVSTAR;}
