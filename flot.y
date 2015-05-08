@@ -91,16 +91,16 @@ DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct
 ListVar : ListVar VRG Ident
     | Ident
     ;
-Ident : IDENT LSQB ENTIER RSQB
+Ident : IDENT Tab
     | IDENT EGAL NUM { insertNewVar($1, $3); }
-    | IDENT { insertNewVar($1, 0); }
+//    | IDENT { insertNewVar($1, 0); }
     ;
-	/*
-Tab : Tab 
-    | { insertNewVar($1, 0); }
-    ;*/
+	
+Tab : Tab LSQB ENTIER RSQB
+    | /*{ insertNewVar($1, 0); }*/
+    ;
 
-DeclMain : EnTeteMain { function_in_use ="main\0"; } Corps { function_in_use = NULL; }
+DeclMain : EnTeteMain { function_in_use ="main"; } Corps { function_in_use = NULL; }
 	;
 
 EnTeteMain : MAIN LPAR RPAR
@@ -202,21 +202,21 @@ ExpBool :
 %%
 
 void insertNewVar(char * id, int value){ 
-     printf("id='%s' \n",id);
+//     printf("id='%s' \n",id);
     int newAddr =  getNewAddr(function_in_use, symboles, &indexOfSymboles);
     instarg("SET", newAddr);
     inst("SWAP");
     instarg("SET", value);
-    instarg("ALLOC", 1);
+    instarg("ALLOC", 2);
     inst("SAVER"); 
     insert(id, type_of_exp, newAddr,function_in_use, symboles, &indexOfSymboles);
 }
 
 void replace_new_var(char * id){ 
    
-    int addr = getValue(id, symboles, indexOfSymboles);
-    printf("HELLO = %d - '%s'\n",addr,id);
-    instarg("SET", addr);
+//    int addr = getValue(id, symboles, indexOfSymboles);
+//    printf("HELLO = %d - '%s'\n",addr,id);
+    instarg("SET", 1);
     inst("LOADR"); 
 }
 

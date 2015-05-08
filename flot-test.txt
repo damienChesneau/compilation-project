@@ -1,4 +1,4 @@
 main () {
-    entier aa =8;
+    entier aa = 8,bb;
     print(aa);
 }
