@@ -134,7 +134,12 @@ EnTeteFonct : TYPE IDENT LPAR Parametres RPAR {
 	param_cpy($4,sign.param);
 	insert_function($1,sign,$$ = jump_label++,symboles,&indexOfSymboles);
 	}
-    | VOID IDENT LPAR Parametres RPAR {$$ = jump_label++;}
+    | VOID IDENT LPAR Parametres RPAR {
+	type_of_exp = 0; 
+	Signature sign;
+	sign.type = type_of_exp;
+	param_cpy($4,sign.param);
+	insert_function($1,sign,$$ = jump_label++,symboles,&indexOfSymboles);}
     ;
 
 Parametres : VOID {buff_param[0] = -1; $$ = buff_param;}
