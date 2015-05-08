@@ -45,7 +45,7 @@ int getIndex(Sym s[]){
     }
     return 0;
 }
-void insert_function(char * id, int valeur,Signature sign, int addr, Sym s[], int * indexTab){
+void insert_function(char * id, Signature sign, int addr, Sym s[], int * indexTab){
     if(sizeof(s) != TAB_SIZE && getValue(id,s, indexTab) == -1){
         Sym n;
 	n.id = strdup(id);

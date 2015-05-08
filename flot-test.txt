@@ -1,3 +1,8 @@
+
+int bla(int ch, int ds){
+	print(ch+ds);
+}
+
 main () {
     int aa = 8, bb = 7, cc = 8;
     print(bb);

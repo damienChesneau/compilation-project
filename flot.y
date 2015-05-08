@@ -6,10 +6,12 @@
 #include "foncTab.h"
     
 int exp_bool_choice = 0;
-int type_of_exp = 0;/* 1 -> int | 2 -> char */
+int type_of_exp = 0;/* 1 -> int | 2 -> char | 0-> void (for functions)*/
 Sym symboles[20];
 int indexOfSymboles = 0; /* Please do not change initalized val. */
 int function_in_use; /* define the name of current function. */
+int buff_param[32];/*buffer of parametres */
+int index_of_buff_param = 0;/*index of buff_param*/
 
 int yyerror(char*);
 int yylex();
@@ -26,6 +28,8 @@ int jump_if(void);
 void div_star_term(char *as);
 void insertNewVar(char * id, int value);
 void replace_new_var(char * id);
+void param_cpy(int src_param[32],int dest_param[32]);
+void insert_param(int type);
 
 %}
 %union {
@@ -37,6 +41,7 @@ void replace_new_var(char * id);
     char svalds[1];
     int signedint;
     int usint;
+    int * param;
 }
 %token NEGATION CONST EGAL PV VRG LPAR RPAR LACC RACC COMMENT
 %token IF PRINT ELSE WHILE MAIN READ READCH RETURN VOID LSQB RSQB
@@ -62,7 +67,9 @@ void replace_new_var(char * id);
 %type <usint> JumpElse
 %type <usint> WhileLab
 %type <usint> JumpDec
-
+%type <usint> EnTeteFonct
+%type <param> Parametres
+%type <param> ListTypVar
 %%
 Prog : DeclConst DeclVarPuisFonct DeclMain
 	;
@@ -110,23 +117,32 @@ DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
     ;
 
-DeclUneFonct : EnTeteFonct JumpDec{instarg("LABEL",999);} Corps{instarg("LABEL",$2);} /* 999 must be replaced by $1 */
+DeclUneFonct : EnTeteFonct JumpDec{instarg("LABEL",$1);} Corps{instarg("LABEL",$2);}
 	;
 	
 JumpDec :  { 
     instarg("JUMP", $$=jump_label++);
 };
 
-EnTeteFonct : TYPE IDENT LPAR Parametres RPAR
-    | VOID IDENT LPAR Parametres RPAR
+EnTeteFonct : TYPE IDENT LPAR Parametres RPAR {
+	if($1[0] == 'e') 
+		type_of_exp = 1; 
+	else 
+		type_of_exp = 2; 
+	Signature sign;
+	sign.type = type_of_exp;
+	param_cpy($4,sign.param);
+	insert_function($1,sign,$$ = jump_label++,symboles,&indexOfSymboles);
+	}
+    | VOID IDENT LPAR Parametres RPAR {$$ = jump_label++;}
     ;
 
-Parametres : VOID
-    | ListTypVar
+Parametres : VOID {buff_param[0] = -1; $$ = buff_param;}
+    | ListTypVar{index_of_buff_param = 0;$$ = $1;}
     ;
 
-ListTypVar : ListTypVar VRG TYPE IDENT
-    | TYPE IDENT
+ListTypVar : ListTypVar VRG TYPE IDENT {if($3[0] == 'e') insert_param(1); else insert_param(2);index_of_buff_param++;$$ = $1;}
+    | TYPE IDENT {if($1[0] == 'e') insert_param(1); else insert_param(2); ;index_of_buff_param = 0;$$ = buff_param;}
     ;
 
 Corps : LACC DeclConst DeclVar SuiteInstr RACC 
@@ -200,6 +216,17 @@ ExpBool :
     ;
 
 %%
+
+void insert_param(int type){
+	buff_param[index_of_buff_param] = type;
+}
+
+void param_cpy(int src_param[32],int dest_param[32]){
+	int i = 0;
+	for(i = 0; i<32;i++){
+		dest_param = src_param;
+	}
+}
 
 void insertNewVar(char * id, int value){ 
     int newAddr =  getNewAddr(function_in_use, symboles, &indexOfSymboles);
