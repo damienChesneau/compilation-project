@@ -8,7 +8,7 @@
 int exp_bool_choice = 0;
 int type_of_exp = 0;/* 1 -> int | 2 -> char */
 Sym symboles[20];
-int indexOfSymboles = 0;
+int indexOfSymboles = 0; /* Please do not change initalized val. */
 char * function_in_use; /* define the name of current function. */
 
 int yyerror(char*);
@@ -93,7 +93,7 @@ ListVar : ListVar VRG Ident
     ;
 Ident : IDENT Tab
     | IDENT EGAL NUM { insertNewVar($1, $3); }
-//    | IDENT { insertNewVar($1, 0); }
+    | IDENT { insertNewVar($1, 0); }
     ;
 	
 Tab : Tab LSQB ENTIER RSQB
@@ -202,25 +202,23 @@ ExpBool :
 %%
 
 void insertNewVar(char * id, int value){ 
-//     printf("id='%s' \n",id);
     int newAddr =  getNewAddr(function_in_use, symboles, &indexOfSymboles);
     instarg("SET", newAddr);
     inst("SWAP");
     instarg("SET", value);
-    instarg("ALLOC", 2);
+    instarg("ALLOC", 1);
     inst("SAVER"); 
     insert(id, type_of_exp, newAddr,function_in_use, symboles, &indexOfSymboles);
 }
 
 void replace_new_var(char * id){ 
-   
-//    int addr = getValue(id, symboles, indexOfSymboles);
-//    printf("HELLO = %d - '%s'\n",addr,id);
-    instarg("SET", 1);
+    char var[255];
+    strcpy(var,id);
+    int addr = getValue(var, symboles, &indexOfSymboles);
+    instarg("SET", addr);
     inst("LOADR"); 
 }
 
-//TOPST ALLOC
 void div_star_term(char *as){
     inst("POP");
     inst("SWAP"); 
@@ -305,15 +303,7 @@ void comment(const char *s) {
 }
 
 int main(int argc, char** argv) {
-//    int newAddr =  getNewAddr("main", symboles, &indexOfSymboles);
-//    insert("id", 1, newAddr, "main",symboles, &indexOfSymboles);
-//    int a =  getNewAddr("main", symboles, &indexOfSymboles);
-//    printf("%d val %d\n",newAddr,a);
-//    insert("id2", 1, a, "main",symboles, &indexOfSymboles);
-//    int addr = getValue("id2", symboles, indexOfSymboles);
-//    int addar = getValue("id", symboles, indexOfSymboles);
-//    printf("%d id2 \n",addr);
-//    printf("%d id \n",addar);
+    instarg("ALLOC", 1);
     if (argc == 2) {
         yyin = fopen(argv[1], "r");
     } else if (argc == 1) {

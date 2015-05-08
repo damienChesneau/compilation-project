@@ -29,7 +29,7 @@ void insert_function(char * id, int valeur, Signature sign, int addr, Sym s[], i
  New ADDR
  */
 void insert(char * id, int type, int valeur,char * func_name, Sym s[], int * indexTab);
-int getValue(char * id, Sym s[], int indexTab);
+int getValue(char * id, Sym s[], int * indexTab);
 /**
  * Returns a new addr for your locals variables. 
  * If you want's to have a global var insert a NULL pointer in 
