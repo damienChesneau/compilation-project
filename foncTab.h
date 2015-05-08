@@ -17,7 +17,7 @@ typedef struct{
 
 typedef struct {
 	char * id;
-        char * loc_func_name;
+ 	int loc_func;
 	int type;
 	int taille;
 	int addr;
@@ -28,7 +28,7 @@ void insert_function(char * id, int valeur, Signature sign, int addr, Sym s[], i
 /**
  New ADDR
  */
-void insert(char * id, int type, int valeur,char * func_name, Sym s[], int * indexTab);
+void insert(char * id, int type, int addr,int func_in_use, Sym s[], int * indexTab);
 int getValue(char * id, Sym s[], int * indexTab);
 /**
  * Returns a new addr for your locals variables. 
@@ -39,6 +39,6 @@ int getValue(char * id, Sym s[], int * indexTab);
  * @param indexTab nb of occurs in database
  * @return a new addr
  */
-int getNewAddr(char * func_name, Sym symbol[], int * indexTab);
+int getNewAddr(int func_in_use, Sym symbol[], int * indexTab);
 
 #endif

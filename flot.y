@@ -9,7 +9,7 @@ int exp_bool_choice = 0;
 int type_of_exp = 0;/* 1 -> int | 2 -> char */
 Sym symboles[20];
 int indexOfSymboles = 0; /* Please do not change initalized val. */
-char * function_in_use; /* define the name of current function. */
+int function_in_use; /* define the name of current function. */
 
 int yyerror(char*);
 int yylex();
@@ -100,7 +100,7 @@ Tab : Tab LSQB ENTIER RSQB
     | /*{ insertNewVar($1, 0); }*/
     ;
 
-DeclMain : EnTeteMain { function_in_use ="main"; } Corps { function_in_use = NULL; }
+DeclMain : EnTeteMain { function_in_use = 0; } Corps { function_in_use = -1; }
 	;
 
 EnTeteMain : MAIN LPAR RPAR
@@ -110,7 +110,7 @@ DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
     ;
 
-DeclUneFonct : EnTeteFonct JumpDec{instarg("LABEL",999);} Corps{instarg("LABEL",$2);} /* 999 must be replaced by $2 */
+DeclUneFonct : EnTeteFonct JumpDec{instarg("LABEL",999);} Corps{instarg("LABEL",$2);} /* 999 must be replaced by $1 */
 	;
 	
 JumpDec :  { 
@@ -129,7 +129,7 @@ ListTypVar : ListTypVar VRG TYPE IDENT
     | TYPE IDENT
     ;
 
-Corps : LACC DeclConst DeclVar SuiteInstr RACC
+Corps : LACC DeclConst DeclVar SuiteInstr RACC 
 	;
 	
 DeclVar : DeclVar TYPE { if($2[0] == 'e') { type_of_exp =1; }else {type_of_exp = 2; } } ListVar { type_of_exp = 0; } PV

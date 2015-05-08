@@ -2,21 +2,21 @@
 
 int getIndex(Sym s[]);
 
-int getNewAddr(char * func_name, Sym s[], int * indexTab){
+int getNewAddr(int func_in_use, Sym s[], int * indexTab){
     int i, new_addr = 1;
     for(i = 0 ; i < *indexTab ; i++){ 
-	if(strcmp(s[i].loc_func_name, func_name) == 0){ 
+		if(s[i].loc_func == func_in_use){ 
             new_addr++;
         }
-    }
+   	}
     return new_addr;
 }
-void insert(char * id, int type, int addr, char * func_name, Sym s[], int * indexTab){ 
+void insert(char * id, int type, int addr, int func_in_use, Sym s[], int * indexTab){
     if(sizeof(s) != TAB_SIZE ){
         Sym n;
         n.id =   strdup(id);
 	n.type = type;
-        n.loc_func_name = func_name;
+        n.loc_func = func_in_use;
 	switch (type){
             case 1: n.taille = sizeof(int);break;
             case 2: n.taille = sizeof(char);break;

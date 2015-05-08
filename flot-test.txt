@@ -1,4 +1,5 @@
 main () {
-    int aa = 8, bb = 7, cc;
+    int aa = 8, bb = 7, cc = 8;
     print(bb);
+    print(aa);
 }
