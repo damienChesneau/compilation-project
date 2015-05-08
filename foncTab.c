@@ -27,11 +27,13 @@ void insert(char * id, int type, int addr, int func_in_use, Sym s[], int * index
 	*indexTab += 1;
     }
 }
-int getValue(char * id, Sym s[], int * indexTab){
+int getValue(char * id ,int func_in_use, Sym s[], int * indexTab){
     int i;
     for(i = 0 ; i < getIndex(s) ; i++){    
-	if(strcmp(s[i].id, id) == 0){ 
+				if(strcmp(s[i].id, id) == 0){
+					if(s[i].loc_func = func_in_use){ 
             return s[i].addr;		
+           }
         }
     }
     return -1;
