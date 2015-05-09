@@ -24,7 +24,7 @@ typedef struct {
 	Signature sign;
 } Sym;
 
-void insert_function(char * id, Signature sign, int addr, Sym s[], int * indexTab);
+void insert_function(char * id, int func_in_use, Signature sign, int addr, Sym s[], int * indexTab);
 /**
  New ADDR
  */

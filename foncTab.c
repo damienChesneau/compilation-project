@@ -27,11 +27,11 @@ void insert(char * id, int type, int addr, int func_in_use, Sym s[], int * index
 	*indexTab += 1;
     }
 }
-int getValue(char * id ,int func_in_use, Sym s[], int * indexTab){
+int getValue(char * id ,int func_in_use , Sym s[], int * indexTab){
     int i;
     for(i = 0 ; i < getIndex(s) ; i++){    
 				if(strcmp(s[i].id, id) == 0){
-					if(s[i].loc_func = func_in_use){ 
+					if(s[i].loc_func == func_in_use){ 
             return s[i].addr;		
            }
         }
@@ -47,8 +47,8 @@ int getIndex(Sym s[]){
     }
     return 0;
 }
-void insert_function(char * id, Signature sign, int addr, Sym s[], int * indexTab){
-    if(sizeof(s) != TAB_SIZE && getValue(id,s, indexTab) == -1){
+void insert_function(char * id, int func_in_use, Signature sign, int addr, Sym s[], int * indexTab){
+    if(sizeof(s) != TAB_SIZE && getValue(id,func_in_use, s, indexTab) == -1){
         Sym n;
 	n.id = strdup(id);
 	n.type = 3;

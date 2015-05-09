@@ -132,14 +132,14 @@ EnTeteFonct : TYPE IDENT LPAR Parametres RPAR {
 	Signature sign;
 	sign.type = type_of_exp;
 	param_cpy($4,sign.param);
-	insert_function($1,sign,$$ = jump_label++,symboles,&indexOfSymboles);
+	insert_function($2, function_in_use, sign,$$ = jump_label++,symboles,&indexOfSymboles);
 	}
     | VOID IDENT LPAR Parametres RPAR {
 	type_of_exp = 0; 
 	Signature sign;
 	sign.type = type_of_exp;
 	param_cpy($4,sign.param);
-	insert_function($1,sign,$$ = jump_label++,symboles,&indexOfSymboles);}
+	insert_function($2, function_in_use, sign,$$ = jump_label++,symboles,&indexOfSymboles);}
     ;
 
 Parametres : VOID {buff_param[0] = -1; $$ = buff_param;}
@@ -246,7 +246,7 @@ void insertNewVar(char * id, int value){
 void replace_new_var(char * id){ 
     char var[255];
     strcpy(var,id);
-    int addr = getValue(var, symboles, &indexOfSymboles);
+    int addr = getValue(var, function_in_use, symboles, &indexOfSymboles);
     instarg("SET", addr);
     inst("LOADR"); 
 }
