@@ -98,14 +98,14 @@ DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct
 ListVar : ListVar VRG Ident
     | Ident
     ;
-Ident : IDENT Tab
+Ident : IDENT LSQB ENTIER RSQB
     | IDENT EGAL NUM { insertNewVar($1, $3); }
     | IDENT { insertNewVar($1, 0); }
     ;
-	
+/*
 Tab : Tab LSQB ENTIER RSQB
-    | /*{ insertNewVar($1, 0); }*/
-    ;
+    | { insertNewVar($1, 0); }
+    ;*/
 
 DeclMain : EnTeteMain { function_in_use = 0; } Corps { function_in_use = -1; }
 	;
@@ -153,7 +153,7 @@ ListTypVar : ListTypVar VRG TYPE IDENT {if($3[0] == 'e') insert_param(1); else i
 Corps : LACC DeclConst DeclVar SuiteInstr RACC 
 	;
 	
-DeclVar : DeclVar TYPE { if($2[0] == 'e') { type_of_exp =1; }else {type_of_exp = 2; } } ListVar { type_of_exp = 0; } PV
+DeclVar : DeclVar TYPE { if($2[0] == 'e') { type_of_exp =1; }else { type_of_exp = 2; } } ListVar { type_of_exp = 0; } PV
     | /*Epsilon */
     ;
 
@@ -238,7 +238,7 @@ void insertNewVar(char * id, int value){
     instarg("SET", newAddr);
     inst("SWAP");
     instarg("SET", value);
-    instarg("ALLOC", 1);
+    instarg("ALLOC", 2);
     inst("SAVER"); 
     insert(id, type_of_exp, newAddr,function_in_use, symboles, &indexOfSymboles);
 }
