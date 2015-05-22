@@ -3,33 +3,12 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
-#include "foncTab.h"
-    
-int exp_bool_choice = 0;
-int type_of_exp = 0;/* 1 -> int | 2 -> char | 0-> void (for functions)*/
-Sym symboles[20];
-int indexOfSymboles = 0; /* Please do not change initalized val. */
-int function_in_use; /* define the name of current function. */
-int buff_param[32];/*buffer of parametres */
-int index_of_buff_param = 0;/*index of buff_param*/
+#include "producer.h"    
 
 int yyerror(char*);
 int yylex();
 FILE* yyin; 
-//int yylval; 
-int jump_label=0;
-void inst(const char *);
-void instarg(const char *,int);
-void comment(const char *);
-void add_sub_term(char* as);
-void comp_exp_temp(char * as);
-void switchExpBool(void);
-int jump_if(void);
-void div_star_term(char *as);
-void insertNewVar(char * id, int value);
-void replace_new_var(char * id);
-void param_cpy(int src_param[32],int dest_param[32]);
-void insert_param(int type);
+int type_of_exp = 0; /* 1 -> int | 2 -> char | 0-> void (for functions)*/
 
 %}
 %union {
@@ -99,15 +78,15 @@ ListVar : ListVar VRG Ident
     | Ident
     ;
 Ident : IDENT LSQB ENTIER RSQB
-    | IDENT EGAL NUM { insertNewVar($1, $3); }
-    | IDENT { insertNewVar($1, 0); }
+    | IDENT EGAL NUM { insertNewVar($1, $3, type_of_exp); }
+    | IDENT { insertNewVar($1, 0, type_of_exp); }
     ;
 /*
 Tab : Tab LSQB ENTIER RSQB
     | { insertNewVar($1, 0); }
     ;*/
 
-DeclMain : EnTeteMain { function_in_use = 0; } Corps { function_in_use = -1; }
+DeclMain : EnTeteMain { setFunctionInUse(0); } Corps { setFunctionInUse(-1); }
 	;
 
 EnTeteMain : MAIN LPAR RPAR
@@ -121,33 +100,21 @@ DeclUneFonct : EnTeteFonct JumpDec{instarg("LABEL",$1);} Corps{instarg("LABEL",$
 	;
 	
 JumpDec :  { 
-    instarg("JUMP", $$=jump_label++);
+    instarg("JUMP", $$=getNewLabel());
 };
 
 EnTeteFonct : TYPE IDENT LPAR Parametres RPAR {
-	if($1[0] == 'e') 
-		type_of_exp = 1; 
-	else 
-		type_of_exp = 2; 
-	Signature sign;
-	sign.type = type_of_exp;
-	param_cpy($4,sign.param);
-	insert_function($2, function_in_use, sign,$$ = jump_label++,symboles,&indexOfSymboles);
-	}
+    $$= entetfunc(($1[0] == 'e')?1:2 ,(char*)$4, $2);}
     | VOID IDENT LPAR Parametres RPAR {
-	type_of_exp = 0; 
-	Signature sign;
-	sign.type = type_of_exp;
-	param_cpy($4,sign.param);
-	insert_function($2, function_in_use, sign,$$ = jump_label++,symboles,&indexOfSymboles);}
+	$$= entetfunc(0 ,(char*)$4, $2);}
     ;
 
-Parametres : VOID {buff_param[0] = -1; $$ = buff_param;}
-    | ListTypVar{index_of_buff_param = 0;$$ = $1;}
+Parametres : VOID { $$ =set_void_buffer();  }
+    | ListTypVar{ $$ = $1; }
     ;
 
-ListTypVar : ListTypVar VRG TYPE IDENT {if($3[0] == 'e') insert_param(1); else insert_param(2);index_of_buff_param++;$$ = $1;}
-    | TYPE IDENT {if($1[0] == 'e') insert_param(1); else insert_param(2); ;index_of_buff_param = 0;$$ = buff_param;}
+ListTypVar : ListTypVar VRG TYPE IDENT { select_parameter_to_insert($3[0],1); $$ = $1; }
+    | TYPE IDENT { $$=select_parameter_to_insert($1[0],0); }
     ;
 
 Corps : LACC DeclConst DeclVar SuiteInstr RACC 
@@ -179,13 +146,13 @@ Instr : LValue EGAL Exp PV
     ;
 
 WhileLab : {
-    instarg("LABEL", $$ = jump_label++);
+    instarg("LABEL", $$ = getNewLabel());
 };
 
 JumpIf:  { $$= jump_if(); };
 
 JumpElse :  { 
-    instarg("JUMP", $$=jump_label++);
+    instarg("JUMP", $$ = getNewLabel());
 };
 
 Arguments : ListExp
@@ -222,120 +189,13 @@ ExpBool :
 
 %%
 
-void insert_param(int type){
-	buff_param[index_of_buff_param] = type;
-}
-
-void param_cpy(int src_param[32],int dest_param[32]){
-	int i = 0;
-	for(i = 0; i<32;i++){
-		dest_param = src_param;
-	}
-}
-
-void insertNewVar(char * id, int value){ 
-    int newAddr =  getNewAddr(function_in_use, symboles, &indexOfSymboles);
-    instarg("SET", newAddr);
-    inst("SWAP");
-    instarg("SET", value);
-    instarg("ALLOC", 2);
-    inst("SAVER"); 
-    insert(id, type_of_exp, newAddr,function_in_use, symboles, &indexOfSymboles);
-}
-
-void replace_new_var(char * id){ 
-    char var[255];
-    strcpy(var,id);
-    int addr = getValue(var, function_in_use, symboles, &indexOfSymboles);
-    instarg("SET", addr);
-    inst("LOADR"); 
-}
-
-void div_star_term(char *as){
-    inst("POP");
-    inst("SWAP"); 
-    inst("POP");  
-    switch(as[0]){
-    	case '/':
-            inst("DIV"); break;
-	case '*':
-            inst("MUL"); break;
-	case '%': 
-            inst("MOD"); break;
-    }
-    inst("PUSH"); 
-}
-
-void add_sub_term(char* as){
-    inst("POP");
-    inst("SWAP"); 
-    inst("POP");  
-    if(as[0] == '+') {
-        inst("ADD");
-    }else{
-        inst("SUB");
-    }
-    inst("PUSH"); 
-}
-
-void comp_exp_temp(char * comp){
-    if(comp[0] == '=' && comp[1] == '='){
-        exp_bool_choice = 1;
-    }else if (comp[0] == '>' && comp[1] == '='){
-        exp_bool_choice = 2;
-    }else if (comp[0] == '<' && comp[1] == '='){
-        exp_bool_choice = 3;
-    }else if (comp[0] == '!' && comp[1] == '='){
-        exp_bool_choice = 4;
-    }else if (comp[0] == '>'){
-        exp_bool_choice = 5;
-    }else if (comp[0] == '<'){
-        exp_bool_choice = 6;
-    }
-}
-void switchExpBool(){
-    switch(exp_bool_choice){
-        case 1: inst("EQUAL");  break;
-        case 2: inst("GEQ");    break;
-        case 3: inst("LEQ");    break;
-        case 4: inst("NOTEQ");  break;
-        case 5: inst("GREATER");break;
-        case 6: inst("LESS");   break;
-    }
-    exp_bool_choice = 0;
-}
-int jump_if(void){
-    inst("POP"); 
-    inst("SWAP"); 
-    inst("POP");
-    switchExpBool();
-    int ret = jump_label++;
-    instarg("JUMPF", ret);
-    return ret;
-}
 int yyerror(char* s) {
     fprintf(stderr, "%s\n", s);
     return 0;
 }
 
-void endProgram() {
-    printf("HALT\n");
-}
-
-void inst(const char *s) {
-    printf("%s\n", s);
-}
-
-void instarg(const char *s, int n) {
-    printf("%s\t%d\n", s, n);
-}
-
-void comment(const char *s) {
-    printf("#%s\n", s);
-}
-
 int main(int argc, char** argv) {
-    instarg("ALLOC", 1);
+    allocate_stack();
     if (argc == 2) {
         yyin = fopen(argv[1], "r");
     } else if (argc == 1) {

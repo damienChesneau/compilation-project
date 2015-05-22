@@ -4,7 +4,8 @@ int bla(int ch, int ds){
 }
 
 main () {
-    int aa = 8, bb = 7, cc;
+    entier aa = 8, bb = 7, cc;
+    caractere car;
     print(aa);
     print(cc);   
     print(bb);
