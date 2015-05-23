@@ -106,7 +106,7 @@ DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
     ;
 
-DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); }Corps{ vm_label($2); }
+DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); init_param(); }Corps{ vm_label($2); }
 	;
 	
 JumpDec :  { 
@@ -114,9 +114,9 @@ JumpDec :  {
 };
 
 EnTeteFonct : TYPE IDENT LPAR Parametres RPAR {
-    $$= entetfunc(($1[0] == 'e')?INTEGER:CHAR ,(char*)$4, $2);}
+    $$= entetfunc(($1[0] == 'e')?INTEGER:CHAR ,$4, $2);}
     | VOID IDENT LPAR Parametres RPAR {
-	$$= entetfunc(VOIDVAL ,(char*)$4, $2);
+	$$= entetfunc(VOIDVAL ,$4, $2);
     }
     ;
 
@@ -124,8 +124,8 @@ Parametres : VOID { $$ =set_void_buffer();  }
     | ListTypVar{ $$ = $1; }
     ;
 
-ListTypVar : ListTypVar VRG TYPE IDENT { select_parameter_to_insert($3[0],1); $$ = $1; insertNewVar($4, 0, ($3[0] == 'e')?INTEGER:CHAR); }
-    | TYPE IDENT { $$=select_parameter_to_insert($1[0],0); insertNewVar($2, 0, ($1[0] == 'e')?INTEGER:CHAR); }
+ListTypVar : ListTypVar VRG TYPE IDENT { select_parameter_to_insert($3[0],1,$4); $$ = $1; }
+    | TYPE IDENT { $$=select_parameter_to_insert($1[0],0,$2); }
     ;
 
 Corps : LACC DeclConst DeclVar SuiteInstr RACC 

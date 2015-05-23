@@ -23,7 +23,8 @@ void print_value(int type);
 void read_int_val(char * id);
 void read_char_val(char * id);
 
-int entetfunc(int type, char * id, char * id2);
-int* select_parameter_to_insert(char test, int more);
+void init_param();
+int entetfunc(int type, int* types, char * id);
+int* select_parameter_to_insert(char test, int more,char* id);
 int* set_void_buffer();
 void initialize_buffer_index();
