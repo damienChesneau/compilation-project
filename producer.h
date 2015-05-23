@@ -2,11 +2,10 @@
 #define __stdio__
 #include <stdio.h>
 #endif
+#include "vm_functions.h"
 #include "symbols_table.h"
 
-void inst(const char *);
-void instarg(const char *, int);
-void comment(const char *);
+
 void add_sub_term(char* as);
 void comp_exp_temp(char * as);
 void switchExpBool(void);
@@ -15,7 +14,7 @@ void div_star_term(char *as);
 void replace_new_var(char * id);
 void param_cpy(int src_param[32], int dest_param[32]);
 void insert_param(int type);
-void endProgram();
+void vm_endProgram();
 int getNewLabel();
 int setFunctionInUse(int val);
 void insertNewVar(char * id, int value, int type);

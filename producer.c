@@ -23,11 +23,11 @@ void param_cpy(int src_param[32], int dest_param[32]) {
 
 void insertNewVar(char * id, int value, int type) {
     int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
-    instarg("SET", newAddr);
-    inst("SWAP");
-    instarg("SET", value);
-    instarg("ALLOC", 2);
-    inst("SAVER");
+    vm_set(newAddr);
+    vm_swap();
+    vm_set(value);
+    vm_alloc(2);
+    vm_saver();
     insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
 }
 
@@ -35,38 +35,38 @@ void replace_new_var(char * id) {
     char var[255];
     strcpy(var, id);
     int addr = getValue(var, function_in_use, symboles, &indexOfSymboles);
-    instarg("SET", addr);
-    inst("LOADR");
+    vm_set(addr);
+    vm_loadr();
 }
 
 void div_star_term(char *as) {
-    inst("POP");
-    inst("SWAP");
-    inst("POP");
+    vm_pop();
+    vm_swap();
+    vm_pop();
     switch (as[0]) {
         case '/':
-            inst("DIV");
+            vm_div();
             break;
         case '*':
-            inst("MUL");
+            vm_mul();
             break;
         case '%':
-            inst("MOD");
+            vm_mod();
             break;
     }
-    inst("PUSH");
+    vm_push();
 }
 
 void add_sub_term(char* as) {
-    inst("POP");
-    inst("SWAP");
-    inst("POP");
+    vm_pop();
+    vm_swap();
+    vm_pop();
     if (as[0] == '+') {
-        inst("ADD");
+        vm_add();
     } else {
-        inst("SUB");
+        vm_sub();
     }
-    inst("PUSH");
+    vm_push();
 }
 
 void comp_exp_temp(char * comp) {
@@ -87,46 +87,30 @@ void comp_exp_temp(char * comp) {
 
 void switchExpBool() {
     switch (exp_bool_choice) {
-        case 1: inst("EQUAL");
+        case 1: vm_equal();
             break;
-        case 2: inst("GEQ");
+        case 2: vm_geq();
             break;
-        case 3: inst("LEQ");
+        case 3: vm_leq();
             break;
-        case 4: inst("NOTEQ");
+        case 4: vm_noteq();
             break;
-        case 5: inst("GREATER");
+        case 5: vm_greater();
             break;
-        case 6: inst("LESS");
+        case 6: vm_less();
             break;
     }
     exp_bool_choice = 0;
 }
 
 int jump_if(void) {
-    inst("POP");
-    inst("SWAP");
-    inst("POP");
+    vm_pop();
+    vm_swap();
+    vm_pop();
     switchExpBool();
     int ret = jump_label++;
-    instarg("JUMPF", ret);
+    vm_jumpf(ret);
     return ret;
-}
-
-void endProgram() {
-    printf("HALT\n");
-}
-
-void inst(const char *s) {
-    printf("%s\n", s);
-}
-
-void instarg(const char *s, int n) {
-    printf("%s\t%d\n", s, n);
-}
-
-void comment(const char *s) {
-    printf("#%s\n", s);
 }
 
 int getNewLabel() {
@@ -153,20 +137,23 @@ int* select_parameter_to_insert(char test, int more) {
     } else {
         insert_param(2);
     }
-    if(more==1 ){
+    if (more == 1) {
         index_of_buff_param++;
-    }else{
+    } else {
         index_of_buff_param = 0;
     }
     return buff_param;
 }
-int* set_void_buffer(){
-    buff_param[0] = -1; 
+
+int* set_void_buffer() {
+    buff_param[0] = -1;
     return buff_param;
 }
-void initialize_buffer_index(){
+
+void initialize_buffer_index() {
     index_of_buff_param = 0;
 }
-void allocate_stack(){
-    instarg("ALLOC", 1);
+
+void allocate_stack() {
+    vm_alloc(1);
 }

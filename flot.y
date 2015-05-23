@@ -96,11 +96,11 @@ DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
     ;
 
-DeclUneFonct : EnTeteFonct JumpDec{instarg("LABEL",$1);} Corps{instarg("LABEL",$2);}
+DeclUneFonct : EnTeteFonct JumpDec{ vm_label($1); } Corps{ vm_label($2); }
 	;
 	
 JumpDec :  { 
-    instarg("JUMP", $$=getNewLabel());
+    vm_jump($$ = getNewLabel());
 };
 
 EnTeteFonct : TYPE IDENT LPAR Parametres RPAR {
@@ -132,27 +132,27 @@ InstrComp : LACC SuiteInstr RACC
 	;
 	
 Instr : LValue EGAL Exp PV
-    | IF LPAR ExpBool RPAR JumpIf Instr %prec NOELSE { instarg("LABEL", $5);}
-    | IF LPAR ExpBool RPAR JumpIf Instr ELSE JumpElse { instarg("LABEL", $5);} Instr { instarg("LABEL", $8);}
-    | WHILE WhileLab LPAR ExpBool RPAR JumpIf Instr {instarg("JUMP",$2);}{instarg("LABEL",$6);}
+    | IF LPAR ExpBool RPAR JumpIf Instr %prec NOELSE { vm_label($5); }
+    | IF LPAR ExpBool RPAR JumpIf Instr ELSE JumpElse { vm_label($5); } Instr { vm_label($8); }
+    | WHILE WhileLab LPAR ExpBool RPAR JumpIf Instr { vm_jump($2); }{ vm_label($6); }
     | RETURN Exp PV
     | RETURN PV
     | IDENT LPAR Arguments RPAR PV
-    | READ LPAR IDENT RPAR PV { inst("READ"); }
-    | READCH LPAR IDENT RPAR PV { inst("READCH"); }
-    | PRINT LPAR Exp RPAR PV { inst("WRITE"); inst("POP");  }
+    | READ LPAR IDENT RPAR PV { vm_read(); }
+    | READCH LPAR IDENT RPAR PV { vm_readch(); }
+    | PRINT LPAR Exp RPAR PV { vm_write(); vm_pop(); }
     | PV
     | InstrComp
     ;
 
 WhileLab : {
-    instarg("LABEL", $$ = getNewLabel());
+    vm_label($$ = getNewLabel());
 };
 
 JumpIf:  { $$= jump_if(); };
 
 JumpElse :  { 
-    instarg("JUMP", $$ = getNewLabel());
+    vm_jump($$ = getNewLabel());
 };
 
 Arguments : ListExp
@@ -176,8 +176,8 @@ Exp : Exp ADDSUB Exp { add_sub_term($2); }
     | ADDSUB Exp
     | LPAR Exp RPAR
     | LValue
-    | NUM { instarg("SET", $1); inst("PUSH"); }
-    | CARACTERE { instarg("SET", $1); inst("PUSH"); }
+    | NUM { vm_set($1); vm_push(); }
+    | CARACTERE { vm_set($1); vm_push(); }
     | IDENT LPAR Arguments RPAR
     ;
 
@@ -205,6 +205,6 @@ int main(int argc, char** argv) {
         return 1;
     }
     yyparse();
-    endProgram();
+    vm_endProgram();
     return 0;
 }

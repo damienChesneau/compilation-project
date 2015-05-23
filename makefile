@@ -5,7 +5,7 @@ EXEC=flot
 
 all: $(EXEC) clean
 
-$(EXEC): $(EXEC).o symbols_table.o producer.o lex.yy.o 
+$(EXEC): $(EXEC).o symbols_table.o producer.o vm_functions.o lex.yy.o 
 	gcc  -o $@ $^ $(LDFLAGS) 
 
 $(EXEC).c: $(EXEC).y
