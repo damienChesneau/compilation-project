@@ -31,12 +31,14 @@ void insertNewVar(char * id, int value, int type) {
     insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
 }
 
-void replace_new_var(char * id) {
+int replace_new_var(char * id) {
     char var[255];
+    int type = 0;
     strcpy(var, id);
-    int addr = getValue(var, function_in_use, symboles, &indexOfSymboles);
+    int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type);
     vm_set(addr);
     vm_loadr();
+    return type;
 }
 
 void div_star_term(char *as) {
@@ -120,7 +122,7 @@ int getNewLabel() {
 int entetfunc(int type, char * id, char * id2) {
     Signature sign;
     sign.type = type;
-    param_cpy(id, sign.param);
+/*    param_cpy(id, sign.param);*/
     int newLab = getNewLabel();
     insert_function(id2, function_in_use, sign, newLab, symboles, &indexOfSymboles);
     return newLab;
@@ -156,4 +158,49 @@ void initialize_buffer_index() {
 
 void allocate_stack() {
     vm_alloc(1);
+}
+
+void print_value( int type) {
+    if (type == 1) {
+        vm_write();
+        vm_pop();
+    } else if (type == 2) {
+        vm_writech();
+        vm_pop();
+    } else {
+        vm_error("ERROR OF TYPE !");
+    }
+}
+void read_int_val(char * id){
+    int type_of_id = 0; 
+    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
+    if(type_of_id == 1){
+        vm_set(addr);
+        vm_swap();
+        vm_read();
+        vm_saver();
+        restore_regs();
+    }else{
+        vm_error("UNABLE TO READ OTHER THAN A 'ENTIER' IN READ FUNCTION.");
+    }   
+}
+
+void read_char_val(char * id){
+    int type_of_id = 0; 
+    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
+    if(type_of_id == 2){
+        vm_set(addr);
+        vm_swap();
+        vm_readch();
+        vm_saver();
+        restore_regs();
+    }else{
+        vm_error("UNABLE TO READ OTHER THAN A 'ENTIER' IN READ FUNCTION.");
+    }   
+}
+
+void restore_regs(){
+    vm_set(0);
+    vm_swap();
+    vm_set(0);
 }

@@ -48,6 +48,7 @@ int type_of_exp = 0; /* 1 -> int | 2 -> char | 0-> void (for functions)*/
 
 %type <usint> JumpIf
 %type <usint> Exp
+%type <usint> LValue
 %type <usint> JumpElse
 %type <usint> WhileLab
 %type <usint> JumpDec
@@ -55,9 +56,12 @@ int type_of_exp = 0; /* 1 -> int | 2 -> char | 0-> void (for functions)*/
 %type <param> Parametres
 %type <param> ListTypVar
 %%
-Prog : DeclConst DeclVarPuisFonct DeclMain
-	;
-	 
+Prog : Comment DeclConst DeclVarPuisFonct DeclMain 
+    ;
+Comment:
+    COMMENT
+    | /* Epsilon */
+    ;
 DeclConst : DeclConst CONST ListConst PV
     | /*Epsilon */
     ;
@@ -84,6 +88,7 @@ ListVar : ListVar VRG Ident
     ;
 Ident : IDENT LSQB ENTIER RSQB
     | IDENT EGAL NUM { insertNewVar($1, $3, type_of_exp); }
+    | IDENT EGAL CARACTERE { insertNewVar($1, (int) $3, type_of_exp); }
     | IDENT { insertNewVar($1, 0, type_of_exp); }
     ;
 /*
@@ -109,9 +114,10 @@ JumpDec :  {
 };
 
 EnTeteFonct : TYPE IDENT LPAR Parametres RPAR {
-    $$= entetfunc(($1[0] == 'e')?1:2 ,(char*)$4, $2);}
+    $$= entetfunc(($1[0] == 'e')?INTEGER:CHAR ,(char*)$4, $2);}
     | VOID IDENT LPAR Parametres RPAR {
-	$$= entetfunc(0 ,(char*)$4, $2);}
+	$$= entetfunc(VOIDVAL ,(char*)$4, $2);
+    }
     ;
 
 Parametres : VOID { $$ =set_void_buffer();  }
@@ -136,18 +142,20 @@ SuiteInstr : SuiteInstr Instr
 InstrComp : LACC SuiteInstr RACC
 	;
 	
-Instr : LValue EGAL Exp PV
+Instr : 
+ LValue EGAL Exp PV
     | IF LPAR ExpBool RPAR JumpIf Instr %prec NOELSE { vm_label($5); }
     | IF LPAR ExpBool RPAR JumpIf Instr ELSE JumpElse { vm_label($5); } Instr { vm_label($8); }
     | WHILE WhileLab LPAR ExpBool RPAR JumpIf Instr { vm_jump($2); }{ vm_label($6); }
     | RETURN Exp PV
     | RETURN PV
     | IDENT LPAR Arguments RPAR PV
-    | READ LPAR IDENT RPAR PV { vm_read(); }
-    | READCH LPAR IDENT RPAR PV { vm_readch(); }
-    | PRINT LPAR Exp RPAR PV { if($3==INTEGER){ vm_write(); vm_pop();} else { vm_error("ERROR OF TYPE !"); } }
+    | READ LPAR IDENT RPAR PV { read_int_val($3); }
+    | READCH LPAR IDENT RPAR PV { read_char_val($3); }
+    | PRINT LPAR Exp RPAR PV { print_value($3); }
     | PV
     | InstrComp
+    | Comment
     ;
 
 WhileLab : {
@@ -164,9 +172,9 @@ Arguments : ListExp
     | /*Epsilon */
     ;
 
-LValue : IDENT TabExp
-| IDENT { replace_new_var($1); } 
-	;
+LValue : IDENT TabExp {$$ = VOIDVAL; }
+    | IDENT { $$ = replace_new_var($1);  } 
+    ;
 
 TabExp : TabExp LSQB Exp RSQB
     | /*Epsilon */
@@ -180,10 +188,10 @@ Exp : Exp ADDSUB Exp { add_sub_term($2); }
     | Exp DIVSTAR Exp { div_star_term($2); }
     | ADDSUB Exp { $$=INTEGER;  }
     | LPAR Exp RPAR { $$=INTEGER;  }
-    | LValue { $$=INTEGER;  }
+    | LValue { $$ = $1;  }
     | NUM { vm_set($1); vm_push(); $$ = INTEGER; }
-    | CARACTERE { vm_set($1); vm_push(); $$ = CHAR;}
-    | IDENT LPAR Arguments RPAR { $$=INTEGER;  }
+    | CARACTERE {vm_set($1); vm_push(); $$ = CHAR;}
+    | IDENT LPAR Arguments RPAR { $$ = INTEGER; }
     ;
 
 ExpBool :

@@ -99,6 +99,14 @@ void vm_write() {
     inst("WRITE");
 }
 
+void vm_writech() {
+    inst("WRITECH");
+}
+
+void vm_free(int n){
+    instarg("FREE",n);
+}
+
 void vm_endProgram() {
     printf("HALT\n");
 }

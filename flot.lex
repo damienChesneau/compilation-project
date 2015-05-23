@@ -9,6 +9,7 @@ chiffre10 [0-9]
 %%
 
 [ \t\n]+ ;
+"/*"(_|{lettre}|{chiffre10}|(\t)*|(\n)*|(.)*|(\s)*|("(")*|(")")*|(";")*)*"*/" { return COMMENT;}
 "main" { return MAIN;}
 "readch" { return READCH; }
 "read" { return READ; }
@@ -37,7 +38,7 @@ chiffre10 [0-9]
 
 ("+")|("-") { strncpy(yylval.svalas, yytext, yyleng); yylval.svalas[yyleng]='\0'; return ADDSUB; }
 ("*")|("/")|("%") { strncpy(yylval.svalds, yytext, yyleng); yylval.svalds[yyleng]='\0'; return DIVSTAR;}
-^lettre$ {sscanf(yytext,"%c",&yylval.cval); return CARACTERE;}
+'{lettre}' { yylval.cval = yytext[1];return CARACTERE; }
 [0-9]+ { sscanf(yytext,"%d",&yylval.usint); return NUM;}
 {lettre}(_|{lettre}|{chiffre10})* { strncpy(yylval.sval,yytext,yyleng); yylval.sval[yyleng]='\0'; return IDENT;}
 ^('-')?({chiffre10})*$ { sscanf(yytext,"%d",&yylval.signedint); return ENTIER;}

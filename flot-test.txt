@@ -1,12 +1,12 @@
-
 int bla(int ch, int ds){
-    print(ch+ds);
+    
 }
 
 main () {
     entier aa = 8, bb = 7, cc;
-    caractere car;
+    caractere car = 'a';
     print(car);
-    print(cc);   
-    print(bb);
+    readch(car);
+    print(1+1);
+    print(car);
 }
