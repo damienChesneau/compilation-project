@@ -35,3 +35,5 @@ void vm_write();
 
 void vm_endProgram();
 void vm_comment(const char *s);
+
+void vm_error(char * message);

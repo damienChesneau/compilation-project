@@ -107,6 +107,10 @@ void vm_comment(const char *s) {
     printf("#%s\n", s);
 }
 
+void vm_error(char * message) {
+    printf("!!! ERROR -> %s\n", message);
+}
+
 void inst(const char *s) {
     printf("%s\n", s);
 }

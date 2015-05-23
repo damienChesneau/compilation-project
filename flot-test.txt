@@ -6,7 +6,7 @@ int bla(int ch, int ds){
 main () {
     entier aa = 8, bb = 7, cc;
     caractere car;
-    print(aa);
+    print(car);
     print(cc);   
     print(bb);
 }

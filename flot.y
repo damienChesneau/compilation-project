@@ -5,6 +5,10 @@
 #include <string.h>
 #include "producer.h"    
 
+#define INTEGER 1 
+#define CHAR 2 
+#define VOIDVAL 0
+
 int yyerror(char*);
 int yylex();
 FILE* yyin; 
@@ -43,6 +47,7 @@ int type_of_exp = 0; /* 1 -> int | 2 -> char | 0-> void (for functions)*/
 %left NEGATION
 
 %type <usint> JumpIf
+%type <usint> Exp
 %type <usint> JumpElse
 %type <usint> WhileLab
 %type <usint> JumpDec
@@ -74,7 +79,7 @@ DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct
     | /*Epsilon */
     ;
     
-ListVar : ListVar VRG Ident
+ListVar : ListVar VRG Ident 
     | Ident
     ;
 Ident : IDENT LSQB ENTIER RSQB
@@ -140,7 +145,7 @@ Instr : LValue EGAL Exp PV
     | IDENT LPAR Arguments RPAR PV
     | READ LPAR IDENT RPAR PV { vm_read(); }
     | READCH LPAR IDENT RPAR PV { vm_readch(); }
-    | PRINT LPAR Exp RPAR PV { vm_write(); vm_pop(); }
+    | PRINT LPAR Exp RPAR PV { if($3==INTEGER){ vm_write(); vm_pop();} else { vm_error("ERROR OF TYPE !"); } }
     | PV
     | InstrComp
     ;
@@ -173,12 +178,12 @@ ListExp : ListExp VRG Exp
 
 Exp : Exp ADDSUB Exp { add_sub_term($2); }
     | Exp DIVSTAR Exp { div_star_term($2); }
-    | ADDSUB Exp
-    | LPAR Exp RPAR
-    | LValue
-    | NUM { vm_set($1); vm_push(); }
-    | CARACTERE { vm_set($1); vm_push(); }
-    | IDENT LPAR Arguments RPAR
+    | ADDSUB Exp { $$=INTEGER;  }
+    | LPAR Exp RPAR { $$=INTEGER;  }
+    | LValue { $$=INTEGER;  }
+    | NUM { vm_set($1); vm_push(); $$ = INTEGER; }
+    | CARACTERE { vm_set($1); vm_push(); $$ = CHAR;}
+    | IDENT LPAR Arguments RPAR { $$=INTEGER;  }
     ;
 
 ExpBool :

@@ -6,7 +6,7 @@
 #ifndef __funcTab__
 #define __funcTab__
 
-#define TAB_SIZE 20
+#define TAB_SIZE 1000
 
 
 typedef struct{
