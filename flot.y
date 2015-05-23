@@ -96,7 +96,7 @@ Tab : Tab LSQB ENTIER RSQB
     | { insertNewVar($1, 0); }
     ;*/
 
-DeclMain : EnTeteMain { setFunctionInUse(0); } Corps { setFunctionInUse(-1); }
+DeclMain : EnTeteMain { incFunctionInUse(); } Corps 
 	;
 
 EnTeteMain : MAIN LPAR RPAR
@@ -106,7 +106,7 @@ DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
     ;
 
-DeclUneFonct : EnTeteFonct JumpDec{ vm_label($1); } Corps{ vm_label($2); }
+DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); }Corps{ vm_label($2); }
 	;
 	
 JumpDec :  { 
@@ -124,8 +124,8 @@ Parametres : VOID { $$ =set_void_buffer();  }
     | ListTypVar{ $$ = $1; }
     ;
 
-ListTypVar : ListTypVar VRG TYPE IDENT { select_parameter_to_insert($3[0],1); $$ = $1; }
-    | TYPE IDENT { $$=select_parameter_to_insert($1[0],0); }
+ListTypVar : ListTypVar VRG TYPE IDENT { select_parameter_to_insert($3[0],1); $$ = $1; insertNewVar($4, 0, ($3[0] == 'e')?INTEGER:CHAR); }
+    | TYPE IDENT { $$=select_parameter_to_insert($1[0],0); insertNewVar($2, 0, ($1[0] == 'e')?INTEGER:CHAR); }
     ;
 
 Corps : LACC DeclConst DeclVar SuiteInstr RACC 

@@ -6,9 +6,10 @@ Sym symboles[20];
 int indexOfSymboles = 0; /* Please do not change initalized val. */
 int buff_param[32]; /*buffer of parametres */
 int index_of_buff_param = 0; /*index of buff_param*/
-int function_in_use; /* define the name of current function. */
+int function_in_use = 0; /* define the number of the function in the table of symbols. Never decrease, always increase, 0 is for global variables */
 
 void param_cpy(int src_param[32], int dest_param[32]);
+void restore_regs();
 
 void insert_param(int type) {
     buff_param[index_of_buff_param] = type;
@@ -122,15 +123,14 @@ int getNewLabel() {
 int entetfunc(int type, char * id, char * id2) {
     Signature sign;
     sign.type = type;
-/*    param_cpy(id, sign.param);*/
+    param_cpy(id, sign.param);
     int newLab = getNewLabel();
     insert_function(id2, function_in_use, sign, newLab, symboles, &indexOfSymboles);
     return newLab;
 }
 
-int setFunctionInUse(int val) {
-    function_in_use = val;
-    return function_in_use;
+void incFunctionInUse() {
+    function_in_use++;
 }
 
 int* select_parameter_to_insert(char test, int more) {

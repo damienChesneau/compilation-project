@@ -16,7 +16,7 @@ void param_cpy(int src_param[32], int dest_param[32]);
 void insert_param(int type);
 void vm_endProgram();
 int getNewLabel();
-int setFunctionInUse(int val);
+void incFunctionInUse();
 void insertNewVar(char * id, int value, int type);
 void allocate_stack();
 void print_value(int type);
