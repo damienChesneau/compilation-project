@@ -7,15 +7,6 @@ int indexOfSymboles = 0; /* Please do not change initalized val. */
 int buff_param[32]; /*buffer type of parametres */
 int index_of_buff_param = 0; /*index of buff_param*/
 int function_in_use = 0; /* define the number of the function in the table of symbols. Never decrease, always increase, 0 is for global variables */
-char temp_id[32][256];
-
-void init_param() {
-    int i = 0;
-    while (buff_param[i] != -1) {
-        insertNewVar(temp_id[i], 0, buff_param[i]);
-        i++;
-    }
-}
 
 
 void param_cpy(int src_param[32], int dest_param[32]);
@@ -160,12 +151,16 @@ void incFunctionInUse() {
 }
 
 int* select_parameter_to_insert(char test, int more, char* id) {
+    int type;
     if (test == 'e') {
         insert_param(1);
+        type = 1;
     } else {
         insert_param(2);
-    }
-    strncpy(temp_id[index_of_buff_param], id, 256);
+        type = 2;
+    }      
+    
+    insert(id, type, getNewAddr(function_in_use, symboles, &indexOfSymboles), function_in_use, symboles, &indexOfSymboles);
 
     if (more == 1) {
         index_of_buff_param++;
