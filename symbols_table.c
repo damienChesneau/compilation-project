@@ -9,7 +9,6 @@ void param_cpy(int* src_param, int* dest_param) {
     for (i = 0; i < 32; i++) {
         dest_param[i] = src_param[i];
     }
-    printf("\n\n");
 }
 
 int getNewAddr(int func_in_use, Sym s[], int * indexTab) {

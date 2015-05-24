@@ -127,6 +127,10 @@ void vm_call(int n){
 	instarg("CALL",n);
 }
 
+void vm_return(){
+	inst("RETURN");
+}
+
 void inst(const char *s) {
     printf("%s\n", s);
 }

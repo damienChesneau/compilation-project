@@ -8,14 +8,19 @@ int buff_param[32]; /*buffer type of parametres */
 int index_of_buff_param = 0; /*index of buff_param*/
 int function_in_use = 0; /* define the number of the function in the table of symbols. Never decrease, always increase, 0 is for global variables */
 
-
+void print_symbole_debug(){
+	int i = 0;
+	for(i = 0; i<20; i++){
+		printf("%s\t",symboles[i].id);
+	}
+	printf("\n");
+}
 void param_cpy(int src_param[32], int dest_param[32]);
 void restore_regs();
 
 int getNbArg(Sym symbole){
 	int nb_arg = 0;
 	while(symbole.sign.param[nb_arg] != -1 && nb_arg<32	){
-		printf("%d\t",symbole.sign.param[nb_arg]);
 		nb_arg++;
 	}
 	return nb_arg;
@@ -24,7 +29,7 @@ int getNbArg(Sym symbole){
 Sym* getFunction(char * id){
 	int i = 0;
 	for(i = 0; i<indexOfSymboles;i++){
-		if(strcmp(symboles[i].id,id)){
+		if(strcmp(symboles[i].id,id) == 0 && symboles[i].id!=NULL){
 			return &(symboles[i]);
 		}
 	}
@@ -44,7 +49,7 @@ void insertNewVar(char * id, int value, int type) {
     insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
 }
 
-void insertNewTab(char * id, int size, int type, int nbdim) { 
+void insertNewTab(char * id, int size, int type, int nbdim) {
     int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
     vm_set(newAddr);
     vm_swap();
@@ -54,7 +59,7 @@ void insertNewTab(char * id, int size, int type, int nbdim) {
     restore_regs();
     int tab[10] = {size, -1};
     char var[255];
-    strcpy(var, id); 
+    strcpy(var, id);
     insertTab(var, type, newAddr, tab, function_in_use, symboles, &indexOfSymboles);
 }
 
@@ -252,13 +257,13 @@ void manage_neg() {
 }
 
 void manage_bope(int bopevalue) {
-    if (bopevalue == 1) {
+    if (bopevalue == 1) { /* && */
         vm_swap();
         vm_pop();
         vm_pop();
         vm_pop();
         vm_equal();
-    } else if (bopevalue == 2) {
+    } else if (bopevalue == 2) { /* || */
         vm_swap();
         vm_pop();
         vm_pop();
@@ -270,12 +275,25 @@ void manage_bope(int bopevalue) {
 }
 
 int getValueInTab(char * id, int index, int dim) {
+    vm_swap();
     int type_of_id = -1;
     char var[255];
-    strncpy(var,id, strlen(id));
+    strncpy(var, id, strlen(id));
     int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type_of_id);
-    vm_set(addr+index);
+    vm_set(addr);
+    vm_add();
+    vm_loadr();  
+    return type_of_id;
+}
+
+int update_tab_value(char * id, int index) {
+    restore_regs(); 
+    vm_pop();
     vm_swap();
-    vm_loadr();
-    return INTEGER;
+    int type_of_id = -1;
+    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
+    vm_set(addr + index);
+    vm_swap();
+    vm_saver();
+    return type_of_id;
 }

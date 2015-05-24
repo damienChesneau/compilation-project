@@ -87,7 +87,7 @@ DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct
 ListVar : ListVar VRG Ident 
     | Ident
     ;
-Ident : IDENT LSQB NUM RSQB { insertNewTab($1, $3, type_of_exp,1); }
+Ident : IDENT LSQB NUM RSQB {insertNewTab($1, $3, type_of_exp,1); }
     | IDENT EGAL NUM { insertNewVar($1, $3, type_of_exp); }
     | IDENT EGAL CARACTERE { insertNewVar($1, (int) $3, type_of_exp); }
     | IDENT { insertNewVar($1, 0, type_of_exp); }
@@ -107,7 +107,7 @@ DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
     ;
 
-DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); }Corps{ vm_label($2); }
+DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); }Corps{vm_return(); vm_label($2); }
 	;
 	
 JumpDec :  { 
@@ -142,6 +142,7 @@ InstrComp : LACC SuiteInstr RACC
 	
 Instr : 
      IDENT EGAL Exp PV  {  update_value($1); }
+    | IDENT LSQB NUM RSQB EGAL Exp PV  { update_tab_value($1, $3); }
     | IF LPAR ExpBool RPAR JumpIf Instr %prec NOELSE { vm_label($5); }
     | IF LPAR ExpBool RPAR JumpIf Instr ELSE JumpElse { vm_label($5); } Instr { vm_label($8); }
     | WHILE WhileLab LPAR ExpBool RPAR JumpIf Instr { vm_jump($2); }{ vm_label($6); }
@@ -175,7 +176,7 @@ LValue : IDENT { $$ = replace_new_var($1);vm_push();}
     ;
 
 TabExp : TabExp LSQB Exp RSQB {$$= getValueInTab(id_of_tab_exp, 1, 1); }
-    | /*Epsilon */
+    | /*Epsilon */ { $$ = VOIDVAL; }
     ;
 
 ListExp : ListExp VRG Exp {$$ = $3+1;}
@@ -189,7 +190,7 @@ Exp : Exp ADDSUB Exp { add_sub_term($2); }
     | LValue { $$ = $1;  }
     | NUM { vm_swap(); vm_set($1); vm_push(); $$ = INTEGER; }
     | CARACTERE {vm_set($1); vm_push(); $$ = CHAR;}
-    | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) vm_error("Nombre d'arguments invalide"); $$ = tmp_sym->type; vm_call(tmp_sym->addr);}
+   // | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) vm_error("Nombre d'arguments invalide"); $$ = tmp_sym->type; vm_call(tmp_sym->addr);}
     ;
 
 ExpBool :
@@ -197,7 +198,7 @@ ExpBool :
     | NEGATION ExpBool { manage_neg(); }
     | LPAR ExpBool RPAR 
     | ExpBool BOPE { vm_push(); } ExpBool { manage_bope($2); }
-    ;
+    ; 
 
 %%
 
@@ -218,5 +219,6 @@ int main(int argc, char** argv) {
     }
     yyparse();
     vm_endProgram();
+    //print_symbole_debug();
     return 0;
 }

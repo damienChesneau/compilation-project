@@ -25,13 +25,14 @@ void print_value(int type);
 void read_int_val(char * id);
 void read_char_val(char * id);
 int update_value(char * id);
+int update_tab_value(char * id, int index);
 void manage_neg();
 void manage_bope(int bopevalue);
 void insertNewVar(char * id, int value, int type);
 void insertNewTab(char * id, int size, int type,int nbdim);
 int getValueInTab(char * id, int index, int dim);
 
-
+void print_symbole_debug();
 int getNbArg(Sym symbole);
 Sym* getFunction(char * id);
 int entetfunc(int type, int* types, char * id);
