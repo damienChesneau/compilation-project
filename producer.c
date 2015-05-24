@@ -4,9 +4,21 @@ int jump_label = 0;
 int exp_bool_choice = 0;
 Sym symboles[20];
 int indexOfSymboles = 0; /* Please do not change initalized val. */
-int buff_param[32]; /*buffer of parametres */
+int buff_param[32]; /*buffer type of parametres */
 int index_of_buff_param = 0; /*index of buff_param*/
-int function_in_use; /* define the name of current function. */
+int function_in_use = 0; /* define the number of the function in the table of symbols. Never decrease, always increase, 0 is for global variables */
+char temp_id[32][256];
+
+
+
+void init_param(){
+	int i = 0;
+	while(buff_param[i] != -1){
+		insertNewVar(temp_id[i],0,buff_param[i]);
+		i++;
+	}
+}
+
 
 void param_cpy(int src_param[32], int dest_param[32]);
 void restore_regs();
@@ -120,29 +132,31 @@ int getNewLabel() {
     return jump_label++;
 }
 
-int entetfunc(int type, char * id, char * id2) {
+int entetfunc(int type, int* types, char * id) {
     Signature sign;
     sign.type = type;
-    /*    param_cpy(id, sign.param);*/
+    param_cpy(types, sign.param);
     int newLab = getNewLabel();
-    insert_function(id2, function_in_use, sign, newLab, symboles, &indexOfSymboles);
+    insert_function(id, function_in_use, sign, newLab, symboles, &indexOfSymboles);
     return newLab;
 }
 
-int setFunctionInUse(int val) {
-    function_in_use = val;
-    return function_in_use;
+void incFunctionInUse() {
+    function_in_use++;
 }
 
-int* select_parameter_to_insert(char test, int more) {
+int* select_parameter_to_insert(char test, int more,char* id) {
     if (test == 'e') {
         insert_param(1);
     } else {
         insert_param(2);
     }
+    strncpy(temp_id[index_of_buff_param],id,256);
+    
     if (more == 1) {
         index_of_buff_param++;
     } else {
+    	buff_param[index_of_buff_param+1] = -1;
         index_of_buff_param = 0;
     }
     return buff_param;
@@ -151,10 +165,6 @@ int* select_parameter_to_insert(char test, int more) {
 int* set_void_buffer() {
     buff_param[0] = -1;
     return buff_param;
-}
-
-void initialize_buffer_index() {
-    index_of_buff_param = 0;
 }
 
 void allocate_stack() {
