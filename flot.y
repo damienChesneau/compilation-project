@@ -5,9 +5,6 @@
 #include <string.h>
 #include "producer.h"    
 
-#define INTEGER 1 
-#define CHAR 2 
-#define VOIDVAL 0
 
 int yyerror(char*);
 int yylex();

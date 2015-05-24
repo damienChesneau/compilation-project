@@ -274,5 +274,5 @@ int getValueInTab(char * id, int index, int dim) {
     vm_set(addr+index);
     vm_swap();
     vm_loadr();
-    return type_of_id;
+    return INTEGER;
 }

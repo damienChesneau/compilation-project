@@ -5,6 +5,9 @@
 #include "vm_functions.h"
 #include "symbols_table.h"
 
+#define INTEGER 1 
+#define CHAR 2 
+#define VOIDVAL 0
 
 void add_sub_term(char* as);
 void comp_exp_temp(char * as);

@@ -1,12 +1,16 @@
 int bla(int ch, int ds){
-    
+    print(1);
 }
 
 main () {
-    entier aa = 8, bb = 7, cc;
-    caractere car = 'a';
-    print(car);
-    readch(car);
-    print(1+1);
-    print(car);
+    entier tab[20], aa = 8, bb = 7, cc;
+    /*caractere car = 'a';
+    aa = 5;
+    car = 'b';
+    if( (7 > 8 ) || (7 == 0) ) {
+        print(7);
+    } else{
+        print(8+aa);
+    }*/
+    print(tab[0]);
 }
