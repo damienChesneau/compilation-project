@@ -26,6 +26,7 @@ void print_value(int type);
 void read_int_val(char * id);
 void read_char_val(char * id);
 int update_value(char * id);
+int update_tab_value(char * id, int index);
 void manage_neg();
 void manage_bope(int bopevalue);
 void insertNewVar(char * id, int value, int type);

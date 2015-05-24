@@ -142,6 +142,7 @@ InstrComp : LACC SuiteInstr RACC
 	
 Instr : 
      IDENT EGAL Exp PV  {  update_value($1); }
+    | IDENT LSQB NUM RSQB EGAL Exp PV  { update_tab_value($1, $3); }
     | IF LPAR ExpBool RPAR JumpIf Instr %prec NOELSE { vm_label($5); }
     | IF LPAR ExpBool RPAR JumpIf Instr ELSE JumpElse { vm_label($5); } Instr { vm_label($8); }
     | WHILE WhileLab LPAR ExpBool RPAR JumpIf Instr { vm_jump($2); }{ vm_label($6); }
@@ -175,7 +176,7 @@ LValue : IDENT { $$ = replace_new_var($1); }
     ;
 
 TabExp : TabExp LSQB Exp RSQB {$$= getValueInTab(id_of_tab_exp, 1, 1); }
-    | /*Epsilon */
+    | /*Epsilon */ { $$ = VOIDVAL; }
     ;
 
 ListExp : ListExp VRG Exp
@@ -197,7 +198,7 @@ ExpBool :
     | NEGATION ExpBool { manage_neg(); }
     | LPAR ExpBool RPAR 
     | ExpBool BOPE { vm_push(); } ExpBool { manage_bope($2); }
-    ;
+    ; 
 
 %%
 

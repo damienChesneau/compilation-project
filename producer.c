@@ -42,7 +42,7 @@ void insertNewVar(char * id, int value, int type) {
     insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
 }
 
-void insertNewTab(char * id, int size, int type, int nbdim) { 
+void insertNewTab(char * id, int size, int type, int nbdim) {
     int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
     vm_set(newAddr);
     vm_swap();
@@ -52,7 +52,7 @@ void insertNewTab(char * id, int size, int type, int nbdim) {
     restore_regs();
     int tab[10] = {size, -1};
     char var[255];
-    strcpy(var, id); 
+    strcpy(var, id);
     insertTab(var, type, newAddr, tab, function_in_use, symboles, &indexOfSymboles);
 }
 
@@ -249,13 +249,13 @@ void manage_neg() {
 }
 
 void manage_bope(int bopevalue) {
-    if (bopevalue == 1) {
+    if (bopevalue == 1) { /* && */
         vm_swap();
         vm_pop();
         vm_pop();
         vm_pop();
         vm_equal();
-    } else if (bopevalue == 2) {
+    } else if (bopevalue == 2) { /* || */
         vm_swap();
         vm_pop();
         vm_pop();
@@ -267,12 +267,25 @@ void manage_bope(int bopevalue) {
 }
 
 int getValueInTab(char * id, int index, int dim) {
+    vm_swap();
     int type_of_id = -1;
     char var[255];
-    strncpy(var,id, strlen(id));
+    strncpy(var, id, strlen(id));
     int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type_of_id);
-    vm_set(addr+index);
+    vm_set(addr);
+    vm_add();
+    vm_loadr();  
+    return type_of_id;
+}
+
+int update_tab_value(char * id, int index) {
+    restore_regs(); 
+    vm_pop();
     vm_swap();
-    vm_loadr();
-    return INTEGER;
+    int type_of_id = -1;
+    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
+    vm_set(addr + index);
+    vm_swap();
+    vm_saver();
+    return type_of_id;
 }

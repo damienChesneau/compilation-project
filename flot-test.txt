@@ -3,7 +3,8 @@ int bla(int ch, int ds){
 }
 
 main () {
-    entier tab[20], aa = 8, bb = 7, cc;
+    entier tab[20];
+/*, aa = 8, bb = 7, cc;
     /*caractere car = 'a';
     aa = 5;
     car = 'b';
@@ -12,5 +13,7 @@ main () {
     } else{
         print(8+aa);
     }*/
-    print(tab[0]);
+    tab[0] = 22 ; 
+    tab[1] = 77 ; 
+    print(tab[1]);
 }
