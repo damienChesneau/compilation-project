@@ -123,6 +123,10 @@ void vm_error(char * message) {
     printf("!!! ERROR -> %s\n", message);
 }
 
+void vm_call(int n){
+	instarg("CALL",n);
+}
+
 void inst(const char *s) {
     printf("%s\n", s);
 }

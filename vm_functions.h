@@ -128,3 +128,7 @@ void vm_comment(const char *s);
  * Print your message 
  */
 void vm_error(char * message);
+/*
+	Call the function at the label n
+*/
+void vm_call(int n);

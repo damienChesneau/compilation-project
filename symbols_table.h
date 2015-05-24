@@ -25,10 +25,11 @@ typedef struct {
 	Signature sign;
 } Sym;
 
-void insert_function(char * id, int func_in_use, Signature sign, int addr, Sym s[], int * indexTab);
+void insert_function(char * id, int func_in_use, int ret_type, int* param, int addr, Sym s[], int * indexTab);
 /**
  New ADDR
  */
+void param_cpy(int *src_param, int* dest_param);
 void insert(char * id, int type, int addr,int func_in_use, Sym s[], int * indexTab);
 void insertTab(char * id, int type, int addr,int dimsize[20],int func_in_use, Sym s[], int * indexTab);
 int getValue(char * id ,int func_in_use, Sym s[], int * indexTab, int * type);

@@ -12,15 +12,26 @@ int function_in_use = 0; /* define the number of the function in the table of sy
 void param_cpy(int src_param[32], int dest_param[32]);
 void restore_regs();
 
-void insert_param(int type) {
-    buff_param[index_of_buff_param] = type;
+int getNbArg(Sym symbole){
+	int nb_arg = 0;
+	while(symbole.sign.param[nb_arg] != -1 && nb_arg<32	){
+		printf("%d\t",symbole.sign.param[nb_arg]);
+		nb_arg++;
+	}
+	return nb_arg;
 }
 
-void param_cpy(int src_param[32], int dest_param[32]) {
-    int i = 0;
-    for (i = 0; i < 32; i++) {
-        dest_param = src_param;
-    }
+Sym* getFunction(char * id){
+	int i = 0;
+	for(i = 0; i<indexOfSymboles;i++){
+		if(strcmp(symboles[i].id,id)){
+			return &(symboles[i]);
+		}
+	}
+	return NULL;
+}
+void insert_param(int type) {
+    buff_param[index_of_buff_param] = type;
 }
 
 void insertNewVar(char * id, int value, int type) {
@@ -138,11 +149,8 @@ int getNewLabel() {
 }
 
 int entetfunc(int type, int* types, char * id) {
-    Signature sign;
-    sign.type = type;
-    param_cpy(types, sign.param);
     int newLab = getNewLabel();
-    insert_function(id, function_in_use, sign, newLab, symboles, &indexOfSymboles);
+    insert_function(id, function_in_use, type,types, newLab, symboles, &indexOfSymboles);
     return newLab;
 }
 

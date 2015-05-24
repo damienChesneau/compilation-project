@@ -2,6 +2,16 @@
 
 int getIndex(Sym s[]);
 
+
+
+void param_cpy(int* src_param, int* dest_param) {
+    int i = 0;
+    for (i = 0; i < 32; i++) {
+        dest_param[i] = src_param[i];
+    }
+    printf("\n\n");
+}
+
 int getNewAddr(int func_in_use, Sym s[], int * indexTab) {
     int i, new_addr = 1;
     for (i = 0; i < *indexTab; i++) {
@@ -78,15 +88,14 @@ int getIndex(Sym s[]) {
     return 0;
 }
 
-void insert_function(char * id, int func_in_use, Signature sign, int addr, Sym s[], int * indexTab) {
+void insert_function(char * id, int func_in_use, int ret_type, int* param, int addr, Sym s[], int * indexTab) {
     if (sizeof (s) != TAB_SIZE && getValue(id, func_in_use, s, indexTab, NULL) == -1) {
-        Sym n;
-        n.id = strdup(id);
-        n.type = 3;
-        n.taille = 0;
-        n.sign = sign;
-        n.addr = addr;
-        s[*indexTab] = n;
+        s[*indexTab].id = strdup(id);
+        s[*indexTab].type = 3;
+        s[*indexTab].taille = 0;
+        s[*indexTab].sign.type = ret_type;
+        param_cpy(param,s[*indexTab].sign.param);
+        s[*indexTab].addr = addr;
         *indexTab += 1;
     }
 }

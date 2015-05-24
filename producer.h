@@ -15,7 +15,6 @@ void switchExpBool(void);
 int jump_if(void);
 void div_star_term(char *as);
 int replace_new_var(char * id);
-void param_cpy(int src_param[32], int dest_param[32]);
 void insert_param(int type);
 void vm_endProgram();
 int getNewLabel();
@@ -32,7 +31,9 @@ void insertNewVar(char * id, int value, int type);
 void insertNewTab(char * id, int size, int type,int nbdim);
 int getValueInTab(char * id, int index, int dim);
 
-void init_param();
+
+int getNbArg(Sym symbole);
+Sym* getFunction(char * id);
 int entetfunc(int type, int* types, char * id);
 int* select_parameter_to_insert(char test, int more,char* id);
 int* set_void_buffer();

@@ -11,6 +11,7 @@ int yylex();
 FILE* yyin; 
 int type_of_exp = 0; /* 1 -> int | 2 -> char | 0-> void (for functions)*/
 char * id_of_tab_exp;
+Sym* tmp_sym = NULL;
 %}
 %union {
     char cval;
@@ -53,6 +54,8 @@ char * id_of_tab_exp;
 %type <usint> EnTeteFonct
 %type <param> Parametres
 %type <param> ListTypVar
+%type <usint> ListExp
+%type <usint> Arguments
 %%
 Prog : Comment DeclConst DeclVarPuisFonct DeclMain 
     ;
@@ -144,7 +147,7 @@ Instr :
     | WHILE WhileLab LPAR ExpBool RPAR JumpIf Instr { vm_jump($2); }{ vm_label($6); }
     | RETURN Exp PV
     | RETURN PV
-//    | IDENT LPAR Arguments RPAR PV
+    | IDENT LPAR Arguments RPAR PV{tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) printf("%d\t%d\tNombre d'arguments invalide",$3,getNbArg(*tmp_sym)); vm_call(tmp_sym->addr);}
     | READ LPAR IDENT RPAR PV { read_int_val($3); }
     | READCH LPAR IDENT RPAR PV { read_char_val($3); }
     | PRINT LPAR Exp RPAR PV { print_value($3); }
@@ -163,11 +166,11 @@ JumpElse :  {
     vm_jump($$ = getNewLabel());
 };
 
-Arguments : ListExp
-    | /*Epsilon */
+Arguments : ListExp {$$ = $1;}
+    | /*Epsilon */{$$ = 0;}
     ;
 
-LValue : IDENT { $$ = replace_new_var($1); } 
+LValue : IDENT { $$ = replace_new_var($1);vm_push();} 
     | IDENT {id_of_tab_exp = $1;} TabExp { $$ = $3; }
     ;
 
@@ -175,8 +178,8 @@ TabExp : TabExp LSQB Exp RSQB {$$= getValueInTab(id_of_tab_exp, 1, 1); }
     | /*Epsilon */
     ;
 
-ListExp : ListExp VRG Exp
-    | Exp
+ListExp : ListExp VRG Exp {$$ = $3+1;}
+    | Exp {$$ = 1;}
     ;
 
 Exp : Exp ADDSUB Exp { add_sub_term($2); }
@@ -186,7 +189,7 @@ Exp : Exp ADDSUB Exp { add_sub_term($2); }
     | LValue { $$ = $1;  }
     | NUM { vm_swap(); vm_set($1); vm_push(); $$ = INTEGER; }
     | CARACTERE {vm_set($1); vm_push(); $$ = CHAR;}
-    | IDENT LPAR Arguments RPAR { $$ = INTEGER; }
+    | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) vm_error("Nombre d'arguments invalide"); $$ = tmp_sym->type; vm_call(tmp_sym->addr);}
     ;
 
 ExpBool :
