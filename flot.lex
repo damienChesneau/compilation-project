@@ -16,7 +16,8 @@ chiffre10 [0-9]
 "return" { return RETURN; }
 "void" { return VOID; }
 ("==")|(">=")|("<=")|("!=")|(">")|("<") { strncpy(yylval.svalcmp, yytext, yyleng); yylval.svalcmp[yyleng]='\0'; return COMP; }
-("&&") | ("||") { strncpy(yylval.svalbp, yytext, yyleng); yylval.svalcmp[yyleng]='\0'; return BOPE;}
+"&&" { yylval.usint = 1; return BOPE;}
+"||" { yylval.usint = 2; return BOPE;}
 "!" {return NEGATION;}
 "=" {return EGAL;}
 ";" {return PV;}

@@ -23,6 +23,8 @@ void print_value(int type);
 void read_int_val(char * id);
 void read_char_val(char * id);
 int update_value(char * id);
+void manage_neg();
+void manage_bope(int bopevalue);
 
 void init_param();
 int entetfunc(int type, int* types, char * id);

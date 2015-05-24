@@ -113,6 +113,10 @@ void vm_write();
  */
 void vm_writech();
 /*
+ *  reg1← −reg1
+ */
+void vm_neg();
+/*
  * Fin du programme.
  */
 void vm_endProgram();

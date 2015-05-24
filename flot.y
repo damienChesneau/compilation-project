@@ -36,7 +36,7 @@ int type_of_exp = 0; /* 1 -> int | 2 -> char | 0-> void (for functions)*/
 %token <svalcmp> COMP
 %token <svalt> TYPE
 %token <svalds> DIVSTAR
-%token <svalb> BOPE 
+%token <usint> BOPE 
 
 %left NOELSE
 %left ELSE
@@ -189,15 +189,16 @@ Exp : Exp ADDSUB Exp { add_sub_term($2); }
     | ADDSUB Exp { $$=INTEGER;  }
     | LPAR Exp RPAR { $$=INTEGER;  }
     | LValue { $$ = $1;  }
-    | NUM { vm_set($1); vm_push(); $$ = INTEGER; }
+    | NUM { vm_swap(); vm_set($1); vm_push(); $$ = INTEGER; }
     | CARACTERE {vm_set($1); vm_push(); $$ = CHAR;}
     | IDENT LPAR Arguments RPAR { $$ = INTEGER; }
     ;
 
 ExpBool :
       Exp COMP Exp { comp_exp_temp($2); } 
-    | ExpBool BOPE ExpBool 
-    | NEGATION ExpBool 
+    | NEGATION ExpBool { manage_neg(); }
+    | LPAR ExpBool RPAR 
+    | ExpBool BOPE { vm_push(); } ExpBool { manage_bope($2); }
     ;
 
 %%
