@@ -143,19 +143,19 @@ InstrComp : LACC SuiteInstr RACC
 	;
 	
 Instr : 
- LValue EGAL Exp PV
+     IDENT EGAL Exp PV  {  update_value($1); }
     | IF LPAR ExpBool RPAR JumpIf Instr %prec NOELSE { vm_label($5); }
     | IF LPAR ExpBool RPAR JumpIf Instr ELSE JumpElse { vm_label($5); } Instr { vm_label($8); }
     | WHILE WhileLab LPAR ExpBool RPAR JumpIf Instr { vm_jump($2); }{ vm_label($6); }
     | RETURN Exp PV
     | RETURN PV
-    | IDENT LPAR Arguments RPAR PV
+//    | IDENT LPAR Arguments RPAR PV
     | READ LPAR IDENT RPAR PV { read_int_val($3); }
     | READCH LPAR IDENT RPAR PV { read_char_val($3); }
     | PRINT LPAR Exp RPAR PV { print_value($3); }
     | PV
     | InstrComp
-    | Comment
+    | COMMENT
     ;
 
 WhileLab : {
@@ -173,7 +173,7 @@ Arguments : ListExp
     ;
 
 LValue : IDENT TabExp {$$ = VOIDVAL; }
-    | IDENT { $$ = replace_new_var($1);  } 
+    | IDENT { $$ = replace_new_var($1); } 
     ;
 
 TabExp : TabExp LSQB Exp RSQB

@@ -9,6 +9,7 @@ int index_of_buff_param = 0; /*index of buff_param*/
 int function_in_use; /* define the name of current function. */
 
 void param_cpy(int src_param[32], int dest_param[32]);
+void restore_regs();
 
 void insert_param(int type) {
     buff_param[index_of_buff_param] = type;
@@ -122,7 +123,7 @@ int getNewLabel() {
 int entetfunc(int type, char * id, char * id2) {
     Signature sign;
     sign.type = type;
-/*    param_cpy(id, sign.param);*/
+    /*    param_cpy(id, sign.param);*/
     int newLab = getNewLabel();
     insert_function(id2, function_in_use, sign, newLab, symboles, &indexOfSymboles);
     return newLab;
@@ -160,7 +161,7 @@ void allocate_stack() {
     vm_alloc(1);
 }
 
-void print_value( int type) {
+void print_value(int type) {
     if (type == 1) {
         vm_write();
         vm_pop();
@@ -171,36 +172,46 @@ void print_value( int type) {
         vm_error("ERROR OF TYPE !");
     }
 }
-void read_int_val(char * id){
-    int type_of_id = 0; 
+
+void read_int_val(char * id) {
+    int type_of_id = 0;
     int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
-    if(type_of_id == 1){
+    if (type_of_id == 1) {
         vm_set(addr);
         vm_swap();
         vm_read();
         vm_saver();
         restore_regs();
-    }else{
+    } else {
         vm_error("UNABLE TO READ OTHER THAN A 'ENTIER' IN READ FUNCTION.");
-    }   
+    }
 }
 
-void read_char_val(char * id){
-    int type_of_id = 0; 
+void read_char_val(char * id) {
+    int type_of_id = 0;
     int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
-    if(type_of_id == 2){
+    if (type_of_id == 2) {
         vm_set(addr);
         vm_swap();
         vm_readch();
         vm_saver();
         restore_regs();
-    }else{
+    } else {
         vm_error("UNABLE TO READ OTHER THAN A 'ENTIER' IN READ FUNCTION.");
-    }   
+    }
 }
 
-void restore_regs(){
+void restore_regs() {
     vm_set(0);
     vm_swap();
     vm_set(0);
+}
+int update_value(char * id){
+    vm_swap();
+    int type_of_id = -1;
+    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
+    vm_set(addr);
+    vm_swap();
+    vm_saver();
+    return type_of_id;
 }

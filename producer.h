@@ -22,6 +22,7 @@ void allocate_stack();
 void print_value(int type);
 void read_int_val(char * id);
 void read_char_val(char * id);
+int update_value(char * id);
 
 int entetfunc(int type, char * id, char * id2);
 int* select_parameter_to_insert(char test, int more);
