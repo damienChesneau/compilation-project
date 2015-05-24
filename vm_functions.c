@@ -107,6 +107,10 @@ void vm_free(int n){
     instarg("FREE",n);
 }
 
+void vm_neg(){
+    inst("NEG");
+}
+
 void vm_endProgram() {
     printf("HALT\n");
 }

@@ -9,14 +9,12 @@ int index_of_buff_param = 0; /*index of buff_param*/
 int function_in_use = 0; /* define the number of the function in the table of symbols. Never decrease, always increase, 0 is for global variables */
 char temp_id[32][256];
 
-
-
-void init_param(){
-	int i = 0;
-	while(buff_param[i] != -1){
-		insertNewVar(temp_id[i],0,buff_param[i]);
-		i++;
-	}
+void init_param() {
+    int i = 0;
+    while (buff_param[i] != -1) {
+        insertNewVar(temp_id[i], 0, buff_param[i]);
+        i++;
+    }
 }
 
 
@@ -98,6 +96,8 @@ void comp_exp_temp(char * comp) {
     } else if (comp[0] == '<') {
         exp_bool_choice = 6;
     }
+    vm_swap();
+    switchExpBool();
 }
 
 void switchExpBool() {
@@ -119,10 +119,10 @@ void switchExpBool() {
 }
 
 int jump_if(void) {
-    vm_pop();
-    vm_swap();
-    vm_pop();
-    switchExpBool();
+    //    vm_pop();
+    //    vm_swap();
+    //    vm_pop();
+    //    switchExpBool();
     int ret = jump_label++;
     vm_jumpf(ret);
     return ret;
@@ -145,18 +145,18 @@ void incFunctionInUse() {
     function_in_use++;
 }
 
-int* select_parameter_to_insert(char test, int more,char* id) {
+int* select_parameter_to_insert(char test, int more, char* id) {
     if (test == 'e') {
         insert_param(1);
     } else {
         insert_param(2);
     }
-    strncpy(temp_id[index_of_buff_param],id,256);
-    
+    strncpy(temp_id[index_of_buff_param], id, 256);
+
     if (more == 1) {
         index_of_buff_param++;
     } else {
-    	buff_param[index_of_buff_param+1] = -1;
+        buff_param[index_of_buff_param + 1] = -1;
         index_of_buff_param = 0;
     }
     return buff_param;
@@ -216,7 +216,8 @@ void restore_regs() {
     vm_swap();
     vm_set(0);
 }
-int update_value(char * id){
+
+int update_value(char * id) {
     vm_swap();
     int type_of_id = -1;
     int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
@@ -224,4 +225,28 @@ int update_value(char * id){
     vm_swap();
     vm_saver();
     return type_of_id;
+}
+
+void manage_neg() {
+    vm_swap();
+    vm_set(0);
+    vm_equal();
+}
+
+void manage_bope(int bopevalue) {
+    if (bopevalue == 1) {
+        vm_swap();
+        vm_pop();
+        vm_pop();
+        vm_pop();
+        vm_equal();
+    } else if (bopevalue == 2) {
+        vm_swap();
+        vm_pop();
+        vm_pop();
+        vm_pop();
+        vm_add();
+    } else {
+        vm_error("UNABLE TO FIND WHAT YOU WANT.");
+    }
 }
