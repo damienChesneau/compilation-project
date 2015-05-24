@@ -13,7 +13,7 @@ int yyerror(char*);
 int yylex();
 FILE* yyin; 
 int type_of_exp = 0; /* 1 -> int | 2 -> char | 0-> void (for functions)*/
-
+char * id_of_tab_exp;
 %}
 %union {
     char cval;
@@ -46,7 +46,8 @@ int type_of_exp = 0; /* 1 -> int | 2 -> char | 0-> void (for functions)*/
 %left DIVSTAR
 %left NEGATION
 
-%type <usint> JumpIf
+%type <usint> TabExp
+%type <usint> JumpIf 
 %type <usint> Exp
 %type <usint> LValue
 %type <usint> JumpElse
@@ -86,7 +87,7 @@ DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct
 ListVar : ListVar VRG Ident 
     | Ident
     ;
-Ident : IDENT LSQB ENTIER RSQB
+Ident : IDENT LSQB NUM RSQB { insertNewTab($1, $3, type_of_exp,1); }
     | IDENT EGAL NUM { insertNewVar($1, $3, type_of_exp); }
     | IDENT EGAL CARACTERE { insertNewVar($1, (int) $3, type_of_exp); }
     | IDENT { insertNewVar($1, 0, type_of_exp); }
@@ -172,11 +173,11 @@ Arguments : ListExp
     | /*Epsilon */
     ;
 
-LValue : IDENT TabExp {$$ = VOIDVAL; }
-    | IDENT { $$ = replace_new_var($1); } 
+LValue : IDENT { $$ = replace_new_var($1); } 
+    | IDENT {id_of_tab_exp = $1;} TabExp { $$ = $3; }
     ;
 
-TabExp : TabExp LSQB Exp RSQB
+TabExp : TabExp LSQB Exp RSQB {$$= getValueInTab(id_of_tab_exp, 1, 1); }
     | /*Epsilon */
     ;
 

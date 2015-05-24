@@ -42,6 +42,20 @@ void insertNewVar(char * id, int value, int type) {
     insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
 }
 
+void insertNewTab(char * id, int size, int type, int nbdim) { 
+    int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
+    vm_set(newAddr);
+    vm_swap();
+    vm_alloc(size);
+    vm_set(size);
+    vm_saver();
+    restore_regs();
+    int tab[10] = {size, -1};
+    char var[255];
+    strcpy(var, id); 
+    insertTab(var, type, newAddr, tab, function_in_use, symboles, &indexOfSymboles);
+}
+
 int replace_new_var(char * id) {
     char var[255];
     int type = 0;
@@ -179,6 +193,7 @@ void print_value(int type) {
         vm_writech();
         vm_pop();
     } else {
+        printf("type=%d\n", type);
         vm_error("ERROR OF TYPE !");
     }
 }
@@ -249,4 +264,15 @@ void manage_bope(int bopevalue) {
     } else {
         vm_error("UNABLE TO FIND WHAT YOU WANT.");
     }
+}
+
+int getValueInTab(char * id, int index, int dim) {
+    int type_of_id = -1;
+    char var[255];
+    strncpy(var,id, strlen(id));
+    int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type_of_id);
+    vm_set(addr+index);
+    vm_swap();
+    vm_loadr();
+    return type_of_id;
 }

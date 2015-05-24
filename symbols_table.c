@@ -31,8 +31,32 @@ void insert(char * id, int type, int addr, int func_in_use, Sym s[], int * index
     }
 }
 
+void insertTab(char * id, int type, int addr, int dimsize[20], int func_in_use, Sym s[], int * indexTab) {
+    if (sizeof (s) != TAB_SIZE) {
+        Sym n;
+        n.id = strdup(id);
+        n.type = type;
+        n.loc_func = func_in_use;
+        switch (type) {
+            case 1: n.taille = sizeof (int);
+                break;
+            case 2: n.taille = sizeof (char);
+                break;
+            default: n.taille = 0;
+        }
+        int b = 0;
+        for (b = 0; dimsize[b] != -1; b++) {
+            n.tabinfo[b] = dimsize[b];
+        }
+        n.tabinfo[b] = -1;
+        n.addr = addr;
+        s[*indexTab] = n;
+        *indexTab += 1;
+    }
+}
+
 int getValue(char * id, int func_in_use, Sym s[], int * indexTab, int * type) {
-    int i;
+    int i=0;
     for (i = 0; i < getIndex(s); i++) {
         if (strcmp(s[i].id, id) == 0) {
             if (s[i].loc_func == func_in_use) {
@@ -55,7 +79,7 @@ int getIndex(Sym s[]) {
 }
 
 void insert_function(char * id, int func_in_use, Signature sign, int addr, Sym s[], int * indexTab) {
-    if (sizeof (s) != TAB_SIZE && getValue(id, func_in_use, s, indexTab,NULL) == -1) {
+    if (sizeof (s) != TAB_SIZE && getValue(id, func_in_use, s, indexTab, NULL) == -1) {
         Sym n;
         n.id = strdup(id);
         n.type = 3;

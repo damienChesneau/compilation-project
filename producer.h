@@ -25,6 +25,9 @@ void read_char_val(char * id);
 int update_value(char * id);
 void manage_neg();
 void manage_bope(int bopevalue);
+void insertNewVar(char * id, int value, int type);
+void insertNewTab(char * id, int size, int type,int nbdim);
+int getValueInTab(char * id, int index, int dim);
 
 void init_param();
 int entetfunc(int type, int* types, char * id);

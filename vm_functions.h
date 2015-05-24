@@ -124,5 +124,7 @@ void vm_endProgram();
  * comment
  */
 void vm_comment(const char *s);
-
+/*
+ * Print your message 
+ */
 void vm_error(char * message);

@@ -21,6 +21,7 @@ typedef struct {
 	int type;
 	int taille;
 	int addr;
+        int tabinfo[20];/*i -> nb of dim. * -> length */
 	Signature sign;
 } Sym;
 
@@ -29,6 +30,7 @@ void insert_function(char * id, int func_in_use, Signature sign, int addr, Sym s
  New ADDR
  */
 void insert(char * id, int type, int addr,int func_in_use, Sym s[], int * indexTab);
+void insertTab(char * id, int type, int addr,int dimsize[20],int func_in_use, Sym s[], int * indexTab);
 int getValue(char * id ,int func_in_use, Sym s[], int * indexTab, int * type);
 /**
  * Returns a new addr for your locals variables. 
