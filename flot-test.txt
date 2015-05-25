@@ -1,10 +1,20 @@
-int bla(int b){
-	entier c = 5;
-    print(b);
+int bla(int ch){
+    print(88);
 }
 
 main () {
-	entier c = 8; 
-	bla(4);
-	print(c);
+    entier tab[20], aa = 8;
+    caractere car = 'a';
+    aa = 5;
+    /*car = 'b';*/
+    if( (7 > 8 ) || (7 == 0) ) {
+        print(7);
+    } else{
+        print(8+aa);
+    }*/
+    bla(7);
+    /*tab[0] = 22 ; 
+    tab[1] = 77 ; 
+    print(tab[1]);*/
+    print(aa);
 }

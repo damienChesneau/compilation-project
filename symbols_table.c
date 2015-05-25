@@ -2,8 +2,6 @@
 
 int getIndex(Sym s[]);
 
-
-
 void param_cpy(int* src_param, int* dest_param) {
     int i = 0;
     for (i = 0; i < 32; i++) {
@@ -15,7 +13,11 @@ int getNewAddr(int func_in_use, Sym s[], int * indexTab) {
     int i, new_addr = 1;
     for (i = 0; i < *indexTab; i++) {
         if (s[i].loc_func == func_in_use) {
-            new_addr++;
+            if (s[i].istab == 1) {
+                new_addr += s[i].totalsize;
+            } else {
+                new_addr++;
+            }
         }
     }
     return new_addr;
@@ -25,6 +27,7 @@ void insert(char * id, int type, int addr, int func_in_use, Sym s[], int * index
     if (sizeof (s) != TAB_SIZE) {
         Sym n;
         n.id = strdup(id);
+        n.istab = 0;
         n.type = type;
         n.loc_func = func_in_use;
         switch (type) {
@@ -35,6 +38,7 @@ void insert(char * id, int type, int addr, int func_in_use, Sym s[], int * index
             default: n.taille = 0;
         }
         n.addr = addr;
+//        printf("-----------------%d\n",n.addr);
         s[*indexTab] = n;
         *indexTab += 1;
     }
@@ -44,6 +48,7 @@ void insertTab(char * id, int type, int addr, int dimsize[20], int func_in_use, 
     if (sizeof (s) != TAB_SIZE) {
         Sym n;
         n.id = strdup(id);
+        n.istab = 1;
         n.type = type;
         n.loc_func = func_in_use;
         switch (type) {
@@ -54,8 +59,10 @@ void insertTab(char * id, int type, int addr, int dimsize[20], int func_in_use, 
             default: n.taille = 0;
         }
         int b = 0;
+        n.totalsize = 1;
         for (b = 0; dimsize[b] != -1; b++) {
             n.tabinfo[b] = dimsize[b];
+            n.totalsize *= dimsize[b];
         }
         n.tabinfo[b] = -1;
         n.addr = addr;
@@ -65,7 +72,7 @@ void insertTab(char * id, int type, int addr, int dimsize[20], int func_in_use, 
 }
 
 int getValue(char * id, int func_in_use, Sym s[], int * indexTab, int * type) {
-    int i=0;
+    int i = 0;
     for (i = 0; i < getIndex(s); i++) {
         if (strcmp(s[i].id, id) == 0) {
             if (s[i].loc_func == func_in_use) {
@@ -93,7 +100,7 @@ void insert_function(char * id, int func_in_use, int ret_type, int* param, int a
         s[*indexTab].type = 3;
         s[*indexTab].taille = 0;
         s[*indexTab].sign.type = ret_type;
-        param_cpy(param,s[*indexTab].sign.param);
+        param_cpy(param, s[*indexTab].sign.param);
         s[*indexTab].addr = addr;
         *indexTab += 1;
     }

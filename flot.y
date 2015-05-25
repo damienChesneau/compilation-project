@@ -141,7 +141,8 @@ InstrComp : LACC SuiteInstr RACC
 	;
 	
 Instr : 
-     IDENT EGAL Exp PV  {  update_value($1); }
+     COMMENT
+    | IDENT EGAL Exp PV  {  update_value($1); }
     | IDENT LSQB NUM RSQB EGAL Exp PV  { update_tab_value($1, $3); }
     | IF LPAR ExpBool RPAR JumpIf Instr %prec NOELSE { vm_label($5); }
     | IF LPAR ExpBool RPAR JumpIf Instr ELSE JumpElse { vm_label($5); } Instr { vm_label($8); }
@@ -154,7 +155,7 @@ Instr :
     | PRINT LPAR Exp RPAR PV { print_value($3); }
     | PV
     | InstrComp
-    | COMMENT
+
     ;
 
 WhileLab : {
