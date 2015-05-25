@@ -1,5 +1,5 @@
 %{
-#include "flot.h"
+#include "tpc.h"
   int fileno (FILE *stream); /*non ansi*/
 %}
 lettre [A-Za-z]        

@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall
 LDFLAGS=-Wall -lfl
-EXEC=flot
+EXEC=tpc
 
 all: $(EXEC) clean
 
