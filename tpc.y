@@ -91,6 +91,7 @@ Ident : IDENT LSQB NUM RSQB {insertNewTab($1, $3, type_of_exp,1); }
     | IDENT EGAL NUM { insertNewVar($1, $3, type_of_exp); }
     | IDENT EGAL CARACTERE { insertNewVar($1, (int) $3, type_of_exp); }
     | IDENT { insertNewVar($1, 0, type_of_exp); }
+    | IDENT EGAL Exp {insertNewVarTop($1,$3);}	
     ;
 /*
 Tab : Tab LSQB ENTIER RSQB
@@ -169,8 +170,9 @@ JumpElse :  {
     vm_jump($$ = getNewLabel());
 };
 
-Arguments : ListExp {$$ = $1;}
-    | /*Epsilon */{$$ = 0;}
+Arguments : /*Epsilon */{$$ = 0;}
+	| VOID {$$ = 0;}
+	| ListExp {$$ = $1;}
     ;
 
 LValue : IDENT { $$ = replace_new_var($1);vm_push();} 
@@ -192,7 +194,7 @@ Exp : Exp ADDSUB Exp { add_sub_term($2); }
     | LValue { $$ = $1;  }
     | NUM { vm_swap(); vm_set($1); vm_push(); $$ = INTEGER; }
     | CARACTERE {vm_set($1); vm_push(); $$ = CHAR;}
-    | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) vm_error("Nombre d'arguments invalide"); $$ = tmp_sym->sign.type; vm_call(tmp_sym->addr);}
+    | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) vm_error("Nombre d'arguments invalide"); $$ = tmp_sym->sign.type; vm_call(tmp_sym->addr); vm_push();}
     ;
 
 ExpBool :

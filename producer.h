@@ -32,6 +32,7 @@ void insertNewVar(char * id, int value, int type);
 void insertNewTab(char * id, int size, int type,int nbdim);
 int getValueInTab(char * id, int index, int dim);
 
+void insertNewVarTop(char * id,int type);
 void print_symbole_debug();
 int getNbArg(Sym symbole);
 Sym* getFunction(char * id);

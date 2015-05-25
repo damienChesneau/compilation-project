@@ -39,6 +39,16 @@ void insert_param(int type) {
     buff_param[index_of_buff_param] = type;
 }
 
+void insertNewVarTop(char * id,int type) {
+    int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
+    vm_set(newAddr);
+    vm_swap();
+    vm_pop();
+    vm_alloc(2);
+    vm_saver();
+    insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
+}
+
 void insertNewVar(char * id, int value, int type) {
     int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
     vm_set(newAddr);

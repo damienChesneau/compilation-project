@@ -3,5 +3,6 @@ int bla(){
 }
 
 main () {
-    print(bla());
+    int aa =  bla();
+    print(aa);
 }
