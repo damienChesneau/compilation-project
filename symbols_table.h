@@ -16,7 +16,7 @@ typedef struct {
 typedef struct {
     char * id;
     int loc_func;
-    int type;
+    int type; /*1 int, 2 char, 3 func*/
     int taille;
     int addr;
     int istab; /* 1 -> true*/

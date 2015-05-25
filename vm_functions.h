@@ -47,6 +47,14 @@ void vm_saver();
 /*
  * Place dans reg1 la valeur situee `a l’adresse reg1+base de la pile
  */
+void vm_load();
+/*
+ * Stocke la valeur de reg1 a l’adresse reg2 de la pile
+ */
+void vm_save();
+/*
+ * Place dans reg1 la valeur situee `a l’adresse reg1 de la pile
+ */
 void vm_loadr();
 /**
  * reg1←reg1/reg2

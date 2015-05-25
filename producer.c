@@ -1,22 +1,56 @@
 #include "producer.h"
-
+#define NB_SYM 20
 int jump_label = 0;
 int exp_bool_choice = 0;
-Sym symboles[20];
+Sym symboles[NB_SYM];
 int indexOfSymboles = 0; /* Please do not change initalized val. */
 int buff_param[32]; /*buffer type of parametres */
 int index_of_buff_param = 0; /*index of buff_param*/
 int function_in_use = 0; /* define the number of the function in the table of symbols. Never decrease, always increase, 0 is for global variables */
+int index_of_args = 0; /*Index of arguments tu push */
+
+void param_cpy(int src_param[32], int dest_param[32]);
+void restore_regs();
+
+
+void reset_index_of_args(){
+	index_of_args = 0;
+}
+
+void push_arg(){
+	index_of_args++;
+	vm_set(index_of_args);
+	vm_swap();
+	vm_pop();
+	vm_save();
+	vm_push();
+}
+
+void init_param(int func_addr){
+	int i = 0;
+	int j = 0;
+	for(i = 0;i<NB_SYM  ; i++){
+		if(symboles[i].type == 3 && func_addr == symboles[i].addr){
+			j = i;
+		}
+	}
+	for(i = 0; symboles[j].sign.param[i] != -1 && i<32;i++){
+		vm_set(i+1);
+		vm_swap();
+		vm_set(i+1);
+		vm_load();
+		vm_saver();
+		//printf("%d\t",symboles[j].sign.param[i]);
+	}
+}
 
 void print_symbole_debug(){
 	int i = 0;
-	for(i = 0; i<20; i++){
-		printf("%s\t",symboles[i].id);
+	for(i = 0; i<NB_SYM; i++){
+		printf("%s\t%d\t%d\n",symboles[i].id,symboles[i].addr,symboles[i].type);
 	}
 	printf("\n");
 }
-void param_cpy(int src_param[32], int dest_param[32]);
-void restore_regs();
 
 int getNbArg(Sym symbole){
 	int nb_arg = 0;
@@ -172,8 +206,12 @@ int entetfunc(int type, int* types, char * id) {
 void incFunctionInUse() {
     function_in_use++;
 }
+void finish_parameter(){
+   	buff_param[index_of_buff_param] = -1;
+  	index_of_buff_param = 0;
+}
 
-int* select_parameter_to_insert(char test, int more, char* id) {
+int* select_parameter_to_insert(char test,char* id) {
     int type;
     if (test == 'e') {
         insert_param(1);
@@ -184,13 +222,7 @@ int* select_parameter_to_insert(char test, int more, char* id) {
     }      
     
     insert(id, type, getNewAddr(function_in_use, symboles, &indexOfSymboles), function_in_use, symboles, &indexOfSymboles);
-
-    if (more == 1) {
-        index_of_buff_param++;
-    } else {
-        buff_param[index_of_buff_param + 1] = -1;
-        index_of_buff_param = 0;
-    }
+    index_of_buff_param++;
     return buff_param;
 }
 
@@ -200,7 +232,7 @@ int* set_void_buffer() {
 }
 
 void allocate_stack() {
-    vm_alloc(1);
+    vm_alloc(32);
 }
 
 void print_value(int type) {

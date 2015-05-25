@@ -63,7 +63,7 @@ Comment:
     COMMENT
     | /* Epsilon */
     ;
-DeclConst : DeclConst CONST ListConst PV
+DeclConst : DeclConst CONST ListConst PV /*For allocate const var, must do SAVE and begin the list at 33 */
     | /*Epsilon */
     ;
     
@@ -108,7 +108,7 @@ DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
     ;
 
-DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); }Corps{vm_return(); vm_label($2); }
+DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); init_param($1);}Corps{vm_return(); vm_label($2); }
 	;
 	
 JumpDec :  { 
@@ -121,11 +121,11 @@ EnTeteFonct : TYPE IDENT LPAR Parametres RPAR { incFunctionInUse(); $$= entetfun
 
 Parametres : { $$ = set_void_buffer();  }
 	| VOID { $$ = set_void_buffer();  }
-    | ListTypVar{ $$ = $1; }
+    | ListTypVar{ $$ = $1;finish_parameter(); }
     ;
 
-ListTypVar : ListTypVar VRG TYPE IDENT { select_parameter_to_insert($3[0],1,$4); $$ = $1; }
-    | TYPE IDENT { $$=select_parameter_to_insert($1[0],0,$2); }
+ListTypVar : ListTypVar VRG TYPE IDENT { select_parameter_to_insert($3[0],$4); $$ = $1; }
+    | TYPE IDENT { $$=select_parameter_to_insert($1[0],$2); }
     ;
 
 Corps : LACC DeclConst DeclVar SuiteInstr RACC 
@@ -183,8 +183,8 @@ TabExp : TabExp LSQB Exp RSQB {$$= getValueInTab(id_of_tab_exp, 1, 1); }
     | /*Epsilon */ { $$ = VOIDVAL; }
     ;
 
-ListExp : ListExp VRG Exp {$$ = $3+1;}
-    | Exp {$$ = 1;}
+ListExp : ListExp VRG Exp {$$ = $3+1; push_arg();}
+    | Exp {$$ = 1; push_arg(); reset_index_of_args();}
     ;
 
 Exp : Exp ADDSUB Exp { add_sub_term($2); }
@@ -194,7 +194,7 @@ Exp : Exp ADDSUB Exp { add_sub_term($2); }
     | LValue { $$ = $1;  }
     | NUM { vm_swap(); vm_set($1); vm_push(); $$ = INTEGER; }
     | CARACTERE {vm_set($1); vm_push(); $$ = CHAR;}
-    | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) vm_error("Nombre d'arguments invalide"); $$ = tmp_sym->sign.type; vm_call(tmp_sym->addr); vm_push();}
+    | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) printf("%d\t%d\tNombre d'arguments invalide",$3,getNbArg(*tmp_sym)); $$ = tmp_sym->sign.type; vm_call(tmp_sym->addr); vm_push();}
     ;
 
 ExpBool :

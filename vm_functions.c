@@ -27,6 +27,15 @@ void vm_loadr() {
     inst("LOADR");
 }
 
+void vm_save() {
+    inst("SAVE");
+}
+
+void vm_load() {
+    inst("LOAD");
+}
+
+
 void vm_div() {
     inst("DIV");
 }

@@ -32,11 +32,15 @@ void insertNewVar(char * id, int value, int type);
 void insertNewTab(char * id, int size, int type,int nbdim);
 int getValueInTab(char * id, int index, int dim);
 
+void finish_parameter();
+void reset_index_of_args();
+void push_arg();
+void init_param();
 void insertNewVarTop(char * id,int type);
 void print_symbole_debug();
 int getNbArg(Sym symbole);
 Sym* getFunction(char * id);
 int entetfunc(int type, int* types, char * id);
-int* select_parameter_to_insert(char test, int more,char* id);
+int* select_parameter_to_insert(char test,char* id);
 int* set_void_buffer();
 void initialize_buffer_index();
