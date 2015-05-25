@@ -118,7 +118,8 @@ EnTeteFonct : TYPE IDENT LPAR Parametres RPAR { incFunctionInUse(); $$= entetfun
     | VOID IDENT LPAR Parametres RPAR {  incFunctionInUse(); $$= entetfunc(VOIDVAL ,$4, $2); }
     ;
 
-Parametres : VOID { $$ =set_void_buffer();  }
+Parametres : { $$ = set_void_buffer();  }
+	| VOID { $$ = set_void_buffer();  }
     | ListTypVar{ $$ = $1; }
     ;
 
@@ -147,7 +148,7 @@ Instr :
     | IF LPAR ExpBool RPAR JumpIf Instr %prec NOELSE { vm_label($5); }
     | IF LPAR ExpBool RPAR JumpIf Instr ELSE JumpElse { vm_label($5); } Instr { vm_label($8); }
     | WHILE WhileLab LPAR ExpBool RPAR JumpIf Instr { vm_jump($2); }{ vm_label($6); }
-    | RETURN Exp PV
+    | RETURN Exp PV {vm_pop();}
     | RETURN PV
     | IDENT LPAR Arguments RPAR PV{tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) printf("%d\t%d\tNombre d'arguments invalide",$3,getNbArg(*tmp_sym)); vm_call(tmp_sym->addr);}
     | READ LPAR IDENT RPAR PV { read_int_val($3); }
@@ -191,7 +192,7 @@ Exp : Exp ADDSUB Exp { add_sub_term($2); }
     | LValue { $$ = $1;  }
     | NUM { vm_swap(); vm_set($1); vm_push(); $$ = INTEGER; }
     | CARACTERE {vm_set($1); vm_push(); $$ = CHAR;}
-   // | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) vm_error("Nombre d'arguments invalide"); $$ = tmp_sym->type; vm_call(tmp_sym->addr);}
+    | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if($3 != getNbArg(*tmp_sym)) vm_error("Nombre d'arguments invalide"); $$ = tmp_sym->sign.type; vm_call(tmp_sym->addr);}
     ;
 
 ExpBool :
