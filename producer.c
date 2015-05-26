@@ -45,7 +45,7 @@ void push_arg(){
 	vm_swap();
 	vm_pop();
 	vm_save();
-	vm_push();
+	//vm_push();
 }
 
 void init_param(int func_addr){
@@ -144,7 +144,7 @@ int replace_new_var(char * id) {
     strcpy(var, id);
     int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type);
     vm_set(addr);
-    printf("\t\t%d\n",function_in_use);
+    //printf("\t\t%d\n",function_in_use);
     vm_loadr();
     return type;
 }

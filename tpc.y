@@ -170,8 +170,8 @@ JumpElse :  {
     vm_jump($$ = getNewLabel());
 };
 
-Arguments : /*Epsilon */{/*$$ = 0;*/}
-	| VOID {/*$$ = 0;*/}
+Arguments : /*Epsilon */{/*$$ = 0;*/reset_index_of_args();}
+	| VOID {/*$$ = 0;*/reset_index_of_args();}
 	| ListExp {/*$$ = $1;*/}
     ;
 
@@ -223,6 +223,6 @@ int main(int argc, char** argv) {
     }
     yyparse();
     vm_endProgram();
-    print_symbole_debug();
+    //print_symbole_debug();
     return 0;
 }
