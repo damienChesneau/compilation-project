@@ -12,6 +12,8 @@ FILE* yyin;
 int type_of_exp = 0; /* 1 -> int | 2 -> char | 0-> void (for functions)*/
 char * id_of_tab_exp;
 Sym* tmp_sym = NULL;
+int updateable_var = 0;
+
 %}
 %union {
     char cval;
@@ -67,16 +69,16 @@ DeclConst : DeclConst CONST ListConst PV /*For allocate const var, must do SAVE 
     | /*Epsilon */
     ;
     
-ListConst : ListConst VRG IDENT EGAL Litteral
-    | IDENT EGAL Litteral
+ListConst : ListConst VRG IDENT EGAL Litteral { insertNewConst();  }
+    | IDENT EGAL Litteral { insertNewConst(); }
     ;
     
-Litteral : NombreSigne
-    | CARACTERE
+Litteral : NombreSigne  
+    | CARACTERE { vm_set((int) $1); }
     ;
     
-NombreSigne : NUM
-    | ADDSUB NUM
+NombreSigne : NUM { vm_set($1); }
+    | ADDSUB NUM { vm_set($2); if($1[0] == '-'){ vm_neg(); } }
     ;
     
 DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct

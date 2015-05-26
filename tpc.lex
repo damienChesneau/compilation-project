@@ -32,6 +32,7 @@ chiffre10 [0-9]
 "print" {return PRINT;}
 "else" {return ELSE;}
 "while" {return WHILE;}
+"const" { return CONST; }
 "entier" { strncpy(yylval.svalt, yytext, yyleng); yylval.svalt[yyleng]='\0'; return TYPE;}
 "int" { strncpy(yylval.svalt, "entier", yyleng); yylval.svalt[yyleng]='\0'; return TYPE;}
 "caractere" { strncpy(yylval.svalt, yytext, yyleng); yylval.svalt[yyleng]='\0'; return TYPE;}

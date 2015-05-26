@@ -30,6 +30,7 @@ void manage_bope(int bopevalue);
 void insertNewVar(char * id, int value, int type);
 void insertNewTab(char * id, int size, int type,int nbdim);
 int getValueInTab(char * id, int index, int dim);
+void insertNewConst(void);
 
 //void incNbFunction();
 void incFunctionInUse();

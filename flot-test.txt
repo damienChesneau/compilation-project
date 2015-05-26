@@ -19,6 +19,7 @@ int bla(int a, int b, int c, int d, int e){
 }
 
 main () {
+        const contval = 11;
 	int bb = bla(1,2,3,4,5); 
 	entier tab[20], aa = 8+4;
 	caractere car = 'a';

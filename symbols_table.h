@@ -18,6 +18,7 @@ typedef struct {
     int loc_func;
     int type; /*1 int, 2 char, 3 func*/
     int taille;
+    int updatable_var;
     int addr;
     int istab; /* 1 -> true*/
     int totalsize;

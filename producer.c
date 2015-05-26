@@ -376,3 +376,6 @@ int update_tab_value(char * id, int index) {
     vm_saver();
     return type_of_id;
 }
+void insertNewConst(void){
+    
+}
