@@ -97,7 +97,7 @@ int getIndex(Sym s[]) {
 void insert_function(char * id, int func_in_use, int ret_type, int* param, int addr, Sym s[], int * indexTab) {
     if (sizeof (s) != TAB_SIZE && getValue(id, func_in_use, s, indexTab, NULL) == -1) {
         s[*indexTab].id = strdup(id);
-        s[*indexTab].loc_func = func_in_use -1;
+        s[*indexTab].loc_func = func_in_use;
         s[*indexTab].type = 3;
         s[*indexTab].taille = 0;
         s[*indexTab].sign.type = ret_type;

@@ -101,22 +101,22 @@ Tab : Tab LSQB ENTIER RSQB
 DeclMain : EnTeteMain Corps 
 	;
 
-EnTeteMain : MAIN LPAR RPAR {init_function_in_use();}
+EnTeteMain : MAIN LPAR RPAR 
 	;
 
 DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
     ;
 
-DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); init_param($1); setFunctionInUse($1);}Corps{vm_return(); vm_label($2); }
+DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); init_param($1);}Corps{vm_return(); vm_label($2); }
 	;
 	
 JumpDec :  { 
     vm_jump($$ = getNewLabel());
 };
 
-EnTeteFonct : TYPE IDENT LPAR Parametres RPAR { incNbFunction(); $$= entetfunc(($1[0] == 'e')?INTEGER:CHAR ,$4, $2);}
-    | VOID IDENT LPAR Parametres RPAR {  incNbFunction(); $$= entetfunc(VOIDVAL ,$4, $2); }
+EnTeteFonct : TYPE IDENT LPAR Parametres RPAR { incFunctionInUse(); $$= entetfunc(($1[0] == 'e')?INTEGER:CHAR ,$4, $2);}
+    | VOID IDENT LPAR Parametres RPAR {  incFunctionInUse(); $$= entetfunc(VOIDVAL ,$4, $2); }
     ;
 
 Parametres : { $$ = set_void_buffer();  }
@@ -151,7 +151,7 @@ Instr :
     | WHILE WhileLab LPAR ExpBool RPAR JumpIf Instr { vm_jump($2); }{ vm_label($6); }
     | RETURN Exp PV {vm_pop();}
     | RETURN PV
-    | IDENT LPAR Arguments RPAR PV{tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if( get_index_of_args()!= getNbArg(*tmp_sym)) printf("%d\t%d\tNombre d'arguments invalide",get_index_of_args(),getNbArg(*tmp_sym)); vm_call(tmp_sym->addr);restore_caller();}
+    | IDENT LPAR Arguments RPAR PV{tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if( get_index_of_args()!= getNbArg(*tmp_sym)) printf("%d\t%d\tNombre d'arguments invalide",get_index_of_args(),getNbArg(*tmp_sym)); vm_call(tmp_sym->addr);}
     | READ LPAR IDENT RPAR PV { read_int_val($3); }
     | READCH LPAR IDENT RPAR PV { read_char_val($3); }
     | PRINT LPAR Exp RPAR PV { print_value($3); }
@@ -194,7 +194,7 @@ Exp : Exp ADDSUB Exp { add_sub_term($2); }
     | LValue { $$ = $1;  }
     | NUM { vm_swap(); vm_set($1); vm_push(); $$ = INTEGER; }
     | CARACTERE {vm_set($1); vm_push(); $$ = CHAR;}
-    | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if(get_index_of_args() != getNbArg(*tmp_sym)) printf("%d\t%d\tNombre d'arguments invalide",get_index_of_args(),getNbArg(*tmp_sym)); $$ = tmp_sym->sign.type; vm_call(tmp_sym->addr); vm_push();restore_caller();}
+    | IDENT LPAR Arguments RPAR {tmp_sym = getFunction($1); if(tmp_sym == NULL) vm_error("Fonction inexistante"); if(get_index_of_args() != getNbArg(*tmp_sym)) printf("%d\t%d\tNombre d'arguments invalide",get_index_of_args(),getNbArg(*tmp_sym)); $$ = tmp_sym->sign.type; vm_call(tmp_sym->addr); vm_push();}
     ;
 
 ExpBool :

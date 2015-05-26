@@ -1,15 +1,21 @@
+int test3(int b){
+	return 4+b;
+}
+
+int test2(int b){
+	return 4+b;
+}
+
 int test(int a){
 	return 18+a;
 }
 
 int bla(int a, int b, int c, int d, int e){
-	print(test(2));
 	print(a);
 	print(b);
 	print(c);
 	print(d);
 	print(e);
-    return a+b+c+d+e+test(2);
 }
 
 main () {

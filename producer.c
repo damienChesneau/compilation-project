@@ -9,14 +9,14 @@ int buff_param[32]; /*buffer type of parametres */
 int index_of_buff_param = 0; /*index of buff_param*/
 int function_in_use = 0; /* define the number of the function in the table of symbols*/
 int index_of_args = 0; /*Index of arguments tu push */
-int nb_function = 0;/*Nb of function declared*/
+//int nb_function = 0;/*Nb of function declared*/
 int caller[MAX_CALL]; /*Number of the function who calls another function */
 int nb_calls = 0;
 
 
 void param_cpy(int src_param[32], int dest_param[32]);
 void restore_regs();
-
+/*
 void restore_caller(){
 	nb_calls--;
 	function_in_use = caller[nb_calls];
@@ -29,7 +29,7 @@ void setFunctionInUse(int loc){
 }
 void init_function_in_use(){
 	function_in_use = nb_function;
-}
+}*/
 
 int get_index_of_args(){
 	return index_of_args;
@@ -74,7 +74,7 @@ void print_symbole_debug(){
 		printf("%s\t%d\t%d\t%d\n",symboles[i].id,symboles[i].addr,symboles[i].type,symboles[i].loc_func);
 	}
 	
-	printf("FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);
+	//printf("FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);
 }
 
 int getNbArg(Sym symbole){
@@ -89,12 +89,12 @@ Sym* getFunction(char * id){
 	int i = 0;
 	for(i = 0; i<indexOfSymboles;i++){
 		if(strcmp(symboles[i].id,id) == 0 && symboles[i].id!=NULL){
+		/*
+		caller[nb_calls] = function_in_use;
+		nb_calls++;
+		function_in_use = symboles[i].loc_func;
 	
-	caller[nb_calls] = function_in_use;
-	nb_calls++;
-	function_in_use = symboles[i].loc_func;
-	
-	printf("GET FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);
+		printf("GET FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);*/
 			return &(symboles[i]);
 		}
 	}
@@ -105,27 +105,27 @@ void insert_param(int type) {
 }
 
 void insertNewVarTop(char * id,int type) {
-    int newAddr = getNewAddr(nb_function, symboles, &indexOfSymboles);
+    int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
     vm_set(newAddr);
     vm_swap();
     vm_pop();
     vm_alloc(2);
     vm_saver();
-    insert(id, type, newAddr, nb_function, symboles, &indexOfSymboles);
+    insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
 }
 
 void insertNewVar(char * id, int value, int type) {
-    int newAddr = getNewAddr(nb_function, symboles, &indexOfSymboles);
+    int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
     vm_set(newAddr);
     vm_swap();
     vm_set(value);
     vm_alloc(2);
     vm_saver();
-    insert(id, type, newAddr, nb_function, symboles, &indexOfSymboles);
+    insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
 }
 
 void insertNewTab(char * id, int size, int type, int nbdim) {
-    int newAddr = getNewAddr(nb_function, symboles, &indexOfSymboles);
+    int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
     vm_set(newAddr);
     vm_swap();
     vm_alloc(size);
@@ -135,7 +135,7 @@ void insertNewTab(char * id, int size, int type, int nbdim) {
     int tab[10] = {size, -1};
     char var[255];
     strcpy(var, id);
-    insertTab(var, type, newAddr, tab, nb_function, symboles, &indexOfSymboles);
+    insertTab(var, type, newAddr, tab, function_in_use, symboles, &indexOfSymboles);
 }
 
 int replace_new_var(char * id) {
@@ -144,6 +144,7 @@ int replace_new_var(char * id) {
     strcpy(var, id);
     int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type);
     vm_set(addr);
+    printf("\t\t%d\n",function_in_use);
     vm_loadr();
     return type;
 }
@@ -230,14 +231,17 @@ int getNewLabel() {
 
 int entetfunc(int type, int* types, char * id) {
     int newLab = getNewLabel();
-    insert_function(id, nb_function, type,types, newLab, symboles, &indexOfSymboles);
+    insert_function(id, function_in_use, type,types, newLab, symboles, &indexOfSymboles);
     return newLab;
 }
-
+/*
 void incNbFunction() {
     nb_function++;
-}
+}*/
 
+void incFunctionInUse(){
+	function_in_use++;
+}
 void finish_parameter(){
    	buff_param[index_of_buff_param] = -1;
   	index_of_buff_param = 0;
@@ -253,7 +257,7 @@ int* select_parameter_to_insert(char test,char* id) {
         type = 2;
     }      
     
-    insert(id, type, getNewAddr(nb_function, symboles, &indexOfSymboles), nb_function, symboles, &indexOfSymboles);
+    insert(id, type, getNewAddr(function_in_use, symboles, &indexOfSymboles), function_in_use, symboles, &indexOfSymboles);
     index_of_buff_param++;
     return buff_param;
 }
