@@ -1,10 +1,20 @@
-int bla(){
-    return 5;
+int test(int a){
+	return 18+a;
 }
 
-main () { 
-    int bb = bla ();
-	/*entier tab[20], aa = 8+4;
+int bla(int a, int b, int c, int d, int e){
+	print(test(2));
+	print(a);
+	print(b);
+	print(c);
+	print(d);
+	print(e);
+    return a+b+c+d+e+test(2);
+}
+
+main () {
+	int bb = bla(1,2,3,4,5); 
+	entier tab[20], aa = 8+4;
 	caractere car = 'a';
 	aa = 5;
 	car = 'b';
@@ -15,9 +25,6 @@ main () {
 	}
 	tab[0] = 22 ;
 	tab[1] = 77 ;
-	print(tab[1]);
-	aa = bla(7,7,7,7,7);
-    print(aa);*/
-    int cc = bla (7,7,7,7,7);
-    print(bla(7,7,7,7,7));
+	print(tab[0]);
+	print(bb);
 }
