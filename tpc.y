@@ -108,15 +108,15 @@ DeclFonct : DeclFonct DeclUneFonct
     | DeclUneFonct
     ;
 
-DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); init_param($1);}Corps{vm_return(); vm_label($2); }
+DeclUneFonct : EnTeteFonct JumpDec  { vm_label($1); init_param($1);}Corps{incFunctionInUse();vm_return(); vm_label($2); }
 	;
 	
 JumpDec :  { 
     vm_jump($$ = getNewLabel());
 };
 
-EnTeteFonct : TYPE IDENT LPAR Parametres RPAR { incFunctionInUse(); $$= entetfunc(($1[0] == 'e')?INTEGER:CHAR ,$4, $2);}
-    | VOID IDENT LPAR Parametres RPAR {  incFunctionInUse(); $$= entetfunc(VOIDVAL ,$4, $2); }
+EnTeteFonct : TYPE IDENT LPAR Parametres RPAR { /* incFunctionInUse();*/$$= entetfunc(($1[0] == 'e')?INTEGER:CHAR ,$4, $2);}
+    | VOID IDENT LPAR Parametres RPAR { /* incFunctionInUse();*/ $$= entetfunc(VOIDVAL ,$4, $2); }
     ;
 
 Parametres : { $$ = set_void_buffer();  }
