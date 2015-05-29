@@ -81,7 +81,7 @@ NombreSigne : NUM { vm_set($1); }
     | ADDSUB NUM { vm_set($2); if($1[0] == '-'){ vm_neg(); } }
     ;
     
-DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct
+DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct /*Here, I don't know how I can get the type... */
     | DeclFonct
     | /*Epsilon */
     ;
@@ -89,6 +89,7 @@ DeclVarPuisFonct : TYPE ListVar PV DeclVarPuisFonct
 ListVar : ListVar VRG Ident 
     | Ident
     ;
+    
 Ident : IDENT LSQB NUM RSQB {insertNewTab($1, $3, type_of_exp,1); }
     | IDENT EGAL NUM { insertNewVar($1, $3, type_of_exp); }
     | IDENT EGAL CARACTERE { insertNewVar($1, (int) $3, type_of_exp); }
@@ -117,8 +118,8 @@ JumpDec :  {
     vm_jump($$ = getNewLabel());
 };
 
-EnTeteFonct : TYPE IDENT LPAR Parametres RPAR { /* incFunctionInUse();*/$$= entetfunc(($1[0] == 'e')?INTEGER:CHAR ,$4, $2);}
-    | VOID IDENT LPAR Parametres RPAR { /* incFunctionInUse();*/ $$= entetfunc(VOIDVAL ,$4, $2); }
+EnTeteFonct : TYPE IDENT LPAR {set_function_in_use();} Parametres RPAR { set_function_in_use();$$= entetfunc(($1[0] == 'e')?INTEGER:CHAR ,$5, $2);}
+    | VOID IDENT LPAR  {set_function_in_use();}Parametres RPAR { $$= entetfunc(VOIDVAL ,$5, $2); }
     ;
 
 Parametres : { $$ = set_void_buffer();  }

@@ -32,6 +32,8 @@ void insertNewTab(char * id, int size, int type,int nbdim);
 int getValueInTab(char * id, int index, int dim);
 void insertNewConst(void);
 
+int is_global(char *id);
+void set_function_in_use();
 //void incNbFunction();
 void incFunctionInUse();
 /*void setFunctionInUse(int loc);

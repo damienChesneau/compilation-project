@@ -75,7 +75,7 @@ int getValue(char * id, int func_in_use, Sym s[], int * indexTab, int * type) {
     int i = 0;
     for (i = 0; i < getIndex(s); i++) {
         if (strcmp(s[i].id, id) == 0) {
-            if (s[i].loc_func == func_in_use) {
+            if (s[i].loc_func == func_in_use || s[i].loc_func == -1) {
                 *type = s[i].type;
                 return s[i].addr;
             }

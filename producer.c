@@ -1,5 +1,5 @@
 #include "producer.h"
-#define NB_SYM 20
+#define NB_SYM 64
 #define MAX_CALL 256
 int jump_label = 0;
 int exp_bool_choice = 0;
@@ -7,7 +7,7 @@ Sym symboles[NB_SYM];
 int indexOfSymboles = 0; /* Please do not change initalized val. */
 int buff_param[32]; /*buffer type of parametres */
 int index_of_buff_param = 0; /*index of buff_param*/
-int function_in_use = 0; /* define the number of the function in the table of symbols*/
+int function_in_use = -1; /* define the number of the function in the table of symbols*/
 int index_of_args = 0; /*Index of arguments tu push */
 //int nb_function = 0;/*Nb of function declared*/
 int caller[MAX_CALL]; /*Number of the function who calls another function */
@@ -116,12 +116,21 @@ void insertNewVarTop(char * id,int type) {
 
 void insertNewVar(char * id, int value, int type) {
     int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
-    vm_set(newAddr);
-    vm_swap();
-    vm_set(value);
-    vm_alloc(2);
-    vm_saver();
-    insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
+    if(function_in_use == -1){
+		vm_set(newAddr+32);
+		vm_swap();
+		vm_set(value);
+		vm_alloc(2);
+		vm_save();
+    	insert(id, type, newAddr+32, function_in_use, symboles, &indexOfSymboles);
+    }else{
+		vm_set(newAddr);
+		vm_swap();
+		vm_set(value);
+		vm_alloc(2);
+		vm_saver();
+    	insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
+    }
 }
 
 void insertNewTab(char * id, int size, int type, int nbdim) {
@@ -138,6 +147,20 @@ void insertNewTab(char * id, int size, int type, int nbdim) {
     insertTab(var, type, newAddr, tab, function_in_use, symboles, &indexOfSymboles);
 }
 
+int is_global(char *id){
+	int i = 0;
+	for(i = 0; i < NB_SYM; i++){
+		if(strcmp(symboles[i].id,id) == 0){
+			if(symboles[i].loc_func == -1){
+				return 1;
+			}else{
+				return 0;
+			}
+		}
+	}
+	return 0;
+}
+
 int replace_new_var(char * id) {
     char var[255];
     int type = 0;
@@ -145,7 +168,11 @@ int replace_new_var(char * id) {
     int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type);
     vm_set(addr);
     //printf("\t\t%d\n",function_in_use);
-    vm_loadr();
+    if(is_global(id)){
+    	vm_load();
+    }else{
+    	vm_loadr();
+    }
     return type;
 }
 
@@ -239,6 +266,11 @@ void incNbFunction() {
     nb_function++;
 }*/
 
+void set_function_in_use(){
+	if(function_in_use == -1)
+		function_in_use = 0;
+}
+
 void incFunctionInUse(){
 	function_in_use++;
 }
@@ -291,7 +323,11 @@ void read_int_val(char * id) {
         vm_set(addr);
         vm_swap();
         vm_read();
-        vm_saver();
+        if(is_global(id)){
+        	vm_save();
+        }else{
+        	vm_saver();
+        }
         restore_regs();
     } else {
         vm_error("UNABLE TO READ OTHER THAN A 'ENTIER' IN READ FUNCTION.");
@@ -305,7 +341,11 @@ void read_char_val(char * id) {
         vm_set(addr);
         vm_swap();
         vm_readch();
-        vm_saver();
+        if(is_global(id)){
+        	vm_save();
+        }else{
+        	vm_saver();
+        }
         restore_regs();
     } else {
         vm_error("UNABLE TO READ OTHER THAN A 'ENTIER' IN READ FUNCTION.");
@@ -324,7 +364,11 @@ int update_value(char * id) {
     int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
     vm_set(addr);
     vm_swap();
-    vm_saver();
+    if(is_global(id)){
+    	vm_save();
+    }else{
+    	vm_saver();
+    }
     return type_of_id;
 }
 
