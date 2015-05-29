@@ -267,7 +267,7 @@ void incNbFunction() {
 }*/
 
 void set_function_in_use(){
-	if(function_in_use == -1)
+	if(function_in_use < 0)
 		function_in_use = 0;
 }
 

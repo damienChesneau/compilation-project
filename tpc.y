@@ -59,7 +59,7 @@ int updateable_var = 0;
 /*%type <usint> ListExp
 %type <usint> Arguments*/
 %%
-Prog : Comment DeclConst DeclVarPuisFonct DeclMain 
+Prog : Comment DeclConst DeclGlobalVarPuisFonct DeclMain 
     ;
 Comment:
     COMMENT
