@@ -1,0 +1,23 @@
+const a=2;
+entier b;
+
+void f1(entier i){
+	print((i+5)*12);
+	b=b+i;
+}
+
+entier f2(entier i,entier j){
+        b=b+j;
+	return i+j+57;
+}
+
+main(){
+	caractere i;
+	i='a';
+	b=5;
+	print(i);
+	print('\n');
+	f1(a);
+	print(f2(a,b));
+	print(b+a);
+}

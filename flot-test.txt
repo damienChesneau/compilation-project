@@ -19,8 +19,9 @@ int bla(int a, int b, int c, int d, int e){
 }
 
 main () {
-        const contval = 11;
+    const contval = 11;
 	int bb = bla(1,2,3,4,5); 
+	int a = 10;
 	entier tab[20], aa = 8+4;
 	caractere car = 'a';
 	aa = 5;
@@ -29,6 +30,11 @@ main () {
 		print(7);
 	} else{
 		print(8+aa);
+	}
+	
+	while( a>0 ){
+		print(a);
+		a = a-1;
 	}
 	tab[0] = 22 ;
 	tab[1] = 77 ;
