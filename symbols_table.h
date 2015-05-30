@@ -20,6 +20,7 @@ typedef struct {
     int taille;
     int updatable_var;
     int addr;
+    int isconst;
     int istab; /* 1 -> true*/
     int totalsize;
     int tabinfo[20]; /*i -> nb of dim. * -> length */
@@ -31,9 +32,9 @@ void insert_function(char * id, int func_in_use, int ret_type, int* param, int a
  New ADDR
  */
 void param_cpy(int *src_param, int* dest_param);
-void insert(char * id, int type, int addr, int func_in_use, Sym s[], int * indexTab);
+void insert(char * id, int type, int addr, int func_in_use, Sym s[], int * indexTab, int isconst);
 void insertTab(char * id, int type, int addr, int dimsize[20], int func_in_use, Sym s[], int * indexTab);
-int getValue(char * id, int func_in_use, Sym s[], int * indexTab, int * type);
+int getValue(char * id, int func_in_use, Sym s[], int * indexTab, int * type, int * isconst);
 /**
  * Returns a new addr for your locals variables. 
  * If you want's to have a global var insert a NULL pointer in 
@@ -44,5 +45,5 @@ int getValue(char * id, int func_in_use, Sym s[], int * indexTab, int * type);
  * @return a new addr
  */
 int getNewAddr(int func_in_use, Sym symbol[], int * indexTab);
-
+int getNewConstAddr(int func_in_use, Sym s[], int * indexTab);
 #endif

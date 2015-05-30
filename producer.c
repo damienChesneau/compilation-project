@@ -16,120 +16,122 @@ int nb_calls = 0;
 
 void param_cpy(int src_param[32], int dest_param[32]);
 void restore_regs();
+
 /*
 void restore_caller(){
-	nb_calls--;
-	function_in_use = caller[nb_calls];
-	printf("RESTORE FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);
+        nb_calls--;
+        function_in_use = caller[nb_calls];
+        printf("RESTORE FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);
 }
 
 
 void setFunctionInUse(int loc){
-	function_in_use = loc;
+        function_in_use = loc;
 }
 void init_function_in_use(){
-	function_in_use = nb_function;
+        function_in_use = nb_function;
 }*/
 
-int get_index_of_args(){
-	return index_of_args;
+int get_index_of_args() {
+    return index_of_args;
 }
 
-void reset_index_of_args(){
-	index_of_args = 0;
+void reset_index_of_args() {
+    index_of_args = 0;
 }
 
-void push_arg(){
-	index_of_args++;
-	vm_set(index_of_args);
-	vm_swap();
-	vm_pop();
-	vm_save();
-	//vm_push();
+void push_arg() {
+    index_of_args++;
+    vm_set(index_of_args);
+    vm_swap();
+    vm_pop();
+    vm_save();
+    //vm_push();
 }
 
-void init_param(int func_addr){
-	int i = 0;
-	int j = 0;
-	for(i = 0;i<NB_SYM  ; i++){
-		if(symboles[i].type == 3 && func_addr == symboles[i].addr){
-			j = i;
-		}
-	}
+void init_param(int func_addr) {
+    int i = 0;
+    int j = 0;
+    for (i = 0; i < NB_SYM; i++) {
+        if (symboles[i].type == 3 && func_addr == symboles[i].addr) {
+            j = i;
+        }
+    }
+
+    for (i = 0; symboles[j].sign.param[i] != -1 && i < 32; i++) {
+        vm_set(i + 1);
+        vm_swap();
+        vm_set(i + 1);
+        vm_load();
+        vm_alloc(2);
+        vm_saver();
+    }
+}
+
+void print_symbole_debug() {
+    int i = 0;
+    printf("ID\tADDR\tTYPE\tFONCTION\n");
+    for (i = 0; i < NB_SYM; i++) {
+        printf("%s\t%d\t%d\t%d\n", symboles[i].id, symboles[i].addr, symboles[i].type, symboles[i].loc_func);
+    }
+
+    //printf("FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);
+}
+
+int getNbArg(Sym symbole) {
+    int nb_arg = 0;
+    while (symbole.sign.param[nb_arg] != -1 && nb_arg < 32) {
+        nb_arg++;
+    }
+    return nb_arg;
+}
+
+Sym* getFunction(char * id) {
+    int i = 0;
+    for (i = 0; i < indexOfSymboles; i++) {
+        if (strcmp(symboles[i].id, id) == 0 && symboles[i].id != NULL) {
+            /*
+            caller[nb_calls] = function_in_use;
+            nb_calls++;
+            function_in_use = symboles[i].loc_func;
 	
-	for(i = 0; symboles[j].sign.param[i] != -1 && i<32;i++){
-		vm_set(i+1);
-		vm_swap();
-		vm_set(i+1);
-		vm_load();
-		vm_alloc(2);
-		vm_saver();
-	}
+            printf("GET FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);*/
+            return &(symboles[i]);
+        }
+    }
+    return NULL;
 }
 
-void print_symbole_debug(){
-	int i = 0;
-	printf("ID\tADDR\tTYPE\tFONCTION\n");
-	for(i = 0; i<NB_SYM; i++){
-		printf("%s\t%d\t%d\t%d\n",symboles[i].id,symboles[i].addr,symboles[i].type,symboles[i].loc_func);
-	}
-	
-	//printf("FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);
-}
-
-int getNbArg(Sym symbole){
-	int nb_arg = 0;
-	while(symbole.sign.param[nb_arg] != -1 && nb_arg<32	){
-		nb_arg++;
-	}
-	return nb_arg;
-}
-
-Sym* getFunction(char * id){
-	int i = 0;
-	for(i = 0; i<indexOfSymboles;i++){
-		if(strcmp(symboles[i].id,id) == 0 && symboles[i].id!=NULL){
-		/*
-		caller[nb_calls] = function_in_use;
-		nb_calls++;
-		function_in_use = symboles[i].loc_func;
-	
-		printf("GET FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);*/
-			return &(symboles[i]);
-		}
-	}
-	return NULL;
-}
 void insert_param(int type) {
     buff_param[index_of_buff_param] = type;
 }
 
-void insertNewVarTop(char * id,int type) {
+void insertNewVarTop(char * id, int type) {
     int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
     vm_set(newAddr);
     vm_swap();
     vm_pop();
     vm_alloc(2);
     vm_saver();
-    insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
+    insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles, 0);
 }
 
 void insertNewVar(char * id, int value, int type) {
     int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
-    if(function_in_use == -1){
-		vm_set(newAddr+32);
-		vm_swap();
-		vm_set(value);
-		vm_alloc(2);
-		vm_save();
-    	insert(id, type, newAddr+32, function_in_use, symboles, &indexOfSymboles);
-    }else{
-		vm_set(newAddr);
-		vm_swap();
-		vm_set(value);
-		vm_alloc(2);
-		vm_saver();
-    	insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles);
+    if (function_in_use == -1) {
+        vm_set(newAddr + PARAMETER_SPACE);
+        vm_swap();
+        vm_set(value);
+        vm_alloc(2);
+        vm_save();
+        insert(id, type, newAddr + PARAMETER_SPACE, function_in_use, symboles, &indexOfSymboles, 0);
+    } else {
+        vm_set(newAddr);
+        vm_swap();
+        vm_set(value);
+        vm_alloc(2);
+        vm_saver();
+        insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles, 0);
     }
 }
 
@@ -147,31 +149,35 @@ void insertNewTab(char * id, int size, int type, int nbdim) {
     insertTab(var, type, newAddr, tab, function_in_use, symboles, &indexOfSymboles);
 }
 
-int is_global(char *id){
-	int i = 0;
-	for(i = 0; i < NB_SYM; i++){
-		if(strcmp(symboles[i].id,id) == 0){
-			if(symboles[i].loc_func == -1){
-				return 1;
-			}else{
-				return 0;
-			}
-		}
-	}
-	return 0;
+int is_global(char *id) {
+    int i = 0;
+    for (i = 0; i < NB_SYM; i++) {
+        if (symboles[i].id == NULL) {
+            vm_error("VARIABLE NOT DEFINED ! ");
+            return 0;
+        }
+        if (strcmp(symboles[i].id, id) == 0) {
+            return (symboles[i].loc_func == -1) ? 1 : 0;
+        }
+    }
+    return 0;
 }
 
 int replace_new_var(char * id) {
     char var[255];
-    int type = 0;
+    int type = 0, isconst = 0;
     strcpy(var, id);
-    int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type);
+    int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type, &isconst);
+    if (isconst == 1) {
+        vm_set(addr);
+        vm_loadr();
+        return type;
+    }
     vm_set(addr);
-    //printf("\t\t%d\n",function_in_use);
-    if(is_global(id)){
-    	vm_load();
-    }else{
-    	vm_loadr();
+    if (is_global(id)) {
+        vm_loadr();
+    } else {
+        vm_load();
     }
     return type;
 }
@@ -258,28 +264,30 @@ int getNewLabel() {
 
 int entetfunc(int type, int* types, char * id) {
     int newLab = getNewLabel();
-    insert_function(id, function_in_use, type,types, newLab, symboles, &indexOfSymboles);
+    insert_function(id, function_in_use, type, types, newLab, symboles, &indexOfSymboles);
     return newLab;
 }
+
 /*
 void incNbFunction() {
     nb_function++;
 }*/
 
-void set_function_in_use(){
-	if(function_in_use < 0)
-		function_in_use = 0;
+void set_function_in_use() {
+    if (function_in_use < 0)
+        function_in_use = 0;
 }
 
-void incFunctionInUse(){
-	function_in_use++;
-}
-void finish_parameter(){
-   	buff_param[index_of_buff_param] = -1;
-  	index_of_buff_param = 0;
+void incFunctionInUse() {
+    function_in_use++;
 }
 
-int* select_parameter_to_insert(char test,char* id) {
+void finish_parameter() {
+    buff_param[index_of_buff_param] = -1;
+    index_of_buff_param = 0;
+}
+
+int* select_parameter_to_insert(char test, char* id) {
     int type;
     if (test == 'e') {
         insert_param(1);
@@ -287,9 +295,9 @@ int* select_parameter_to_insert(char test,char* id) {
     } else {
         insert_param(2);
         type = 2;
-    }      
-    
-    insert(id, type, getNewAddr(function_in_use, symboles, &indexOfSymboles), function_in_use, symboles, &indexOfSymboles);
+    }
+
+    insert(id, type, getNewAddr(function_in_use, symboles, &indexOfSymboles), function_in_use, symboles, &indexOfSymboles, 0);
     index_of_buff_param++;
     return buff_param;
 }
@@ -300,7 +308,7 @@ int* set_void_buffer() {
 }
 
 void allocate_stack() {
-    vm_alloc(32);
+    vm_alloc(PARAMETER_SPACE);
 }
 
 void print_value(int type) {
@@ -317,16 +325,20 @@ void print_value(int type) {
 }
 
 void read_int_val(char * id) {
-    int type_of_id = 0;
-    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
+    int type_of_id = 0, isconst = 0;
+    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id, &isconst);
+    if (isconst == 1) {
+        vm_error("CANT UPDATE VALUE OF A CONST !");
+        return;
+    }
     if (type_of_id == 1) {
         vm_set(addr);
         vm_swap();
         vm_read();
-        if(is_global(id)){
-        	vm_save();
-        }else{
-        	vm_saver();
+        if (is_global(id)) {
+            vm_save();
+        } else {
+            vm_saver();
         }
         restore_regs();
     } else {
@@ -335,16 +347,20 @@ void read_int_val(char * id) {
 }
 
 void read_char_val(char * id) {
-    int type_of_id = 0;
-    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
+    int type_of_id = 0, isconst = 0;
+    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id, &isconst);
+    if (isconst == 1) {
+        vm_error("CANT UPDATE VALUE OF A CONST !");
+        return;
+    }
     if (type_of_id == 2) {
         vm_set(addr);
         vm_swap();
         vm_readch();
-        if(is_global(id)){
-        	vm_save();
-        }else{
-        	vm_saver();
+        if (is_global(id)) {
+            vm_save();
+        } else {
+            vm_saver();
         }
         restore_regs();
     } else {
@@ -360,14 +376,18 @@ void restore_regs() {
 
 int update_value(char * id) {
     vm_swap();
-    int type_of_id = -1;
-    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
+    int type_of_id = -1, isconst = 0;
+    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id, &isconst);
+    if (isconst == 1) {
+        vm_error("CANT UPDATE VALUE OF A CONST !");
+        return -1;
+    }
     vm_set(addr);
     vm_swap();
-    if(is_global(id)){
-    	vm_save();
-    }else{
-    	vm_saver();
+    if (is_global(id)) {
+        vm_save();
+    } else {
+        vm_saver();
     }
     return type_of_id;
 }
@@ -398,28 +418,45 @@ void manage_bope(int bopevalue) {
 
 int getValueInTab(char * id, int index, int dim) {
     vm_swap();
-    int type_of_id = -1;
+    int type_of_id = -1, isconst = 0;
     char var[255];
     strncpy(var, id, strlen(id));
     var[strlen(id)] = '\0';
-    int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type_of_id);
-    vm_set(addr);
-    vm_add();
-    vm_loadr();  
+    int addr = getValue(var, function_in_use, symboles, &indexOfSymboles, &type_of_id, &isconst);
+    if (isconst == 1) {
+        vm_error("CANT UPDATE VALUE OF A CONST !");
+        return 0;
+    }
+    if (isconst == 1) {
+        vm_set(addr);
+        vm_add();
+        vm_loadr();
+    }
     return type_of_id;
 }
 
 int update_tab_value(char * id, int index) {
-    restore_regs(); 
+    restore_regs();
     vm_pop();
     vm_swap();
-    int type_of_id = -1;
-    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id);
+    int type_of_id = -1, isconst = 0;
+    int addr = getValue(id, function_in_use, symboles, &indexOfSymboles, &type_of_id, &isconst);
+    if (isconst == 1) {
+        vm_error("CANT UPDATE VALUE OF A CONST !");
+        return 0;
+    }
     vm_set(addr + index);
     vm_swap();
     vm_saver();
     return type_of_id;
 }
-void insertNewConst(void){
-    
+
+void insertNewConst(char * id, int isglob) {
+    vm_alloc(2);
+    int newAddr = getNewConstAddr(function_in_use, symboles, &indexOfSymboles);
+    vm_swap();
+    vm_set(newAddr);
+    vm_swap();
+    vm_save();
+    insert(id, INTEGER, newAddr, function_in_use, symboles, &indexOfSymboles, 1);
 }

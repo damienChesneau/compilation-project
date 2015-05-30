@@ -5,8 +5,10 @@
 #include "vm_functions.h"
 #include "symbols_table.h"
 
+#define PARAMETER_SPACE 32
 #define INTEGER 1 
 #define CHAR 2 
+#define CONSTVAL 3
 #define VOIDVAL 0
 
 void add_sub_term(char* as);
@@ -28,9 +30,9 @@ int update_tab_value(char * id, int index);
 void manage_neg();
 void manage_bope(int bopevalue);
 void insertNewVar(char * id, int value, int type);
-void insertNewTab(char * id, int size, int type,int nbdim);
+void insertNewTab(char * id, int size, int type, int nbdim);
 int getValueInTab(char * id, int index, int dim);
-void insertNewConst(void);
+void insertNewConst(char * id, int isglob);
 
 int is_global(char *id);
 void set_function_in_use();
@@ -44,11 +46,11 @@ void finish_parameter();
 void reset_index_of_args();
 void push_arg();
 void init_param();
-void insertNewVarTop(char * id,int type);
+void insertNewVarTop(char * id, int type);
 void print_symbole_debug();
 int getNbArg(Sym symbole);
 Sym* getFunction(char * id);
 int entetfunc(int type, int* types, char * id);
-int* select_parameter_to_insert(char test,char* id);
+int* select_parameter_to_insert(char test, char* id);
 int* set_void_buffer();
 void initialize_buffer_index();

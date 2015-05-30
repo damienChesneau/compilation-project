@@ -13,7 +13,7 @@ int type_of_exp = 0; /* 1 -> int | 2 -> char | 0-> void (for functions)*/
 char * id_of_tab_exp;
 Sym* tmp_sym = NULL;
 int updateable_var = 0;
-
+int is_glob= 0;
 %}
 %union {
     char cval;
@@ -59,7 +59,7 @@ int updateable_var = 0;
 /*%type <usint> ListExp
 %type <usint> Arguments*/
 %%
-Prog : Comment DeclConst DeclGlobalVarPuisFonct DeclMain 
+Prog : Comment {is_glob = 1 ;} DeclConst {is_glob = 0 ;} DeclVarPuisFonct DeclMain 
     ;
 Comment:
     COMMENT
@@ -69,8 +69,8 @@ DeclConst : DeclConst CONST ListConst PV /*For allocate const var, must do SAVE 
     | /*Epsilon */
     ;
     
-ListConst : ListConst VRG IDENT EGAL Litteral { insertNewConst();  }
-    | IDENT EGAL Litteral { insertNewConst(); }
+ListConst : ListConst VRG IDENT EGAL Litteral { insertNewConst($3,is_glob);  }
+    | IDENT EGAL Litteral { insertNewConst($1,is_glob); }
     ;
     
 Litteral : NombreSigne  
@@ -226,6 +226,6 @@ int main(int argc, char** argv) {
     }
     yyparse();
     vm_endProgram();
-    //print_symbole_debug();
+//    print_symbole_debug();
     return 0;
 }

@@ -1,4 +1,4 @@
-int sa = 10;
+const sa = 84;
 
 int test3(int b){
 	return 4+b;
@@ -21,27 +21,31 @@ int bla(int a, int b, int c, int d, int e){
 }
 
 main () {
-    int contval = 11;
-	int bb = bla(1,2,3,4,5); 
-	int a = 10;
-	entier tab[20], aa = 8+4;
-	caractere car = 'a';
-	aa = 5;
-	car = 'b';
-	if( (7 > 8 ) || (7 == 0) ) {
-		print(7);
-	} else{
-		print(8+aa);
-	}
-	
-	while( a>0 ){
-		print(a);
-		a = a-1;
-	}
-	tab[0] = 22 ;
-	tab[1] = 77 ;
-	print(tab[0]);
-	print(bb);
-	print(test2(4)+18);
-	print_test();
+    const maConst = 77;
+    int vari = 11;
+    int bb = bla(1,2,3,4,5); 
+    int a = 10;
+    entier tab[20], aa = 8+4;
+    caractere car = 'a';
+    print(sa);
+    aa = 5;
+    car = 'b';
+    if( (7 > 8 ) || (7 == 0) ) {
+	print(7);
+    } else{
+	print(8+aa);
+    }
+
+    while( a>0 ){
+	print(a);
+	a = a-1;
+    }
+    tab[0] = 22 ;
+    tab[1] = 77 ;
+    print(tab[0]);
+    print(bb);
+    print(test2(4)+18);
+    print_test();
+    print(sa);
+    print(maConst);
 }
