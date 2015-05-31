@@ -7,7 +7,7 @@ void f1(entier i){
 }
 
 entier f2(entier i,entier j){
-        b=b+j;
+    b=b+j;
 	return i+j+57;
 }
 
@@ -16,7 +16,6 @@ main(){
 	i='a';
 	b=5;
 	print(i);
-	print('\n');
 	f1(a);
 	print(f2(a,b));
 	print(b+a);

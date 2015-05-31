@@ -1,8 +1,8 @@
 const sa = 84;
 int val = 8;
 
-
 int test3(int b){
+	print(val+b);
 	return 4+b;
 }
 
@@ -19,6 +19,7 @@ void print_test(){
 }
 
 int bla(int a, int b, int c, int d, int e){
+	val = 2;
 	return test(10)+5+a+b+c+d+e+test3(5);
 }
 

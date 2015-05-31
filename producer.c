@@ -70,9 +70,9 @@ void init_param(int func_addr) {
 
 void print_symbole_debug() {
     int i = 0;
-    printf("ID\tADDR\tTYPE\tFONCTION\n");
+    printf("ID\tADDR\tTYPE\tCONST\tFONCTION\n");
     for (i = 0; i < NB_SYM; i++) {
-        printf("%s\t%d\t%d\t%d\n", symboles[i].id, symboles[i].addr, symboles[i].type, symboles[i].loc_func);
+        printf("%s\t%d\t%d\t%d\t%d\n", symboles[i].id, symboles[i].addr, symboles[i].type,symboles[i].isconst, symboles[i].loc_func);
     }
 
     //printf("FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);

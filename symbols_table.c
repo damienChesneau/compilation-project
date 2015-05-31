@@ -63,6 +63,7 @@ void insertTab(char * id, int type, int addr, int dimsize[20], int func_in_use, 
         n.id = strdup(id);
         n.istab = 1;
         n.type = type;
+        n.isconst = 0;
         n.loc_func = func_in_use;
         switch (type) {
             case 1: n.taille = sizeof (int);
@@ -114,6 +115,7 @@ void insert_function(char * id, int func_in_use, int ret_type, int* param, int a
         s[*indexTab].loc_func = func_in_use;
         s[*indexTab].type = 3;
         s[*indexTab].taille = 0;
+        s[*indexTab].isconst = 0;
         s[*indexTab].sign.type = ret_type;
         param_cpy(param, s[*indexTab].sign.param);
         s[*indexTab].addr = addr;
