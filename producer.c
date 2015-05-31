@@ -175,7 +175,7 @@ int replace_new_var(char * id) {
         return type;
     }
     vm_set(addr);
-    if (is_global(id)) {
+    if (!is_global(id)) {
         vm_loadr();
     } else {
         vm_load();
