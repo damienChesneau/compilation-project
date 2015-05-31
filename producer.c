@@ -9,7 +9,6 @@ int buff_param[32]; /*buffer type of parametres */
 int index_of_buff_param = 0; /*index of buff_param*/
 int function_in_use = -1; /* define the number of the function in the table of symbols*/
 int index_of_args = 0; /*Index of arguments tu push */
-//int nb_function = 0;/*Nb of function declared*/
 int caller[MAX_CALL]; /*Number of the function who calls another function */
 int nb_calls = 0;
 
