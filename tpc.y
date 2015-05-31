@@ -254,7 +254,6 @@ int main(int argc, char** argv) {
     allocate_stack();
     yyparse();
     vm_endProgram();
-//    print_symbole_debug();
     if(argc > 2 ){
         if( strcmp(argv[2],"-o") == 0){
             close(tempout);
@@ -265,18 +264,3 @@ int main(int argc, char** argv) {
     }
     return 0;
 }
-/*
- 
- yyin = fopen(argv[1], "r");
-                printf("sd\n"); 
-                char outputname[255];
-                strcpy(outputname, argv[1]);
-                sscanf(argv[1],"%[^.]",outputname);  
-                outputname[strlen(outputname)-4] ='\0';
-                sprintf(outputname,"%s.vm",outputname);
-                tempout = open(outputname, O_RDWR | O_TRUNC | O_CREAT,1);
-                oldout = dup(1);
-                close(1);
-                newout = dup(tempout); /* renvoie 1  
- 
- */

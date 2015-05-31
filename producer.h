@@ -33,14 +33,9 @@ void insertNewVar(char * id, int value, int type);
 void insertNewTab(char * id, int size, int type, int nbdim);
 int getValueInTab(char * id, int index, int dim);
 void insertNewConst(char * id, int isglob,int type);
-
 int is_global(char *id);
 void set_function_in_use();
-//void incNbFunction();
 void incFunctionInUse();
-/*void setFunctionInUse(int loc);
-void restore_caller();
-void init_function_in_use();*/
 int get_index_of_args();
 void finish_parameter();
 void reset_index_of_args();

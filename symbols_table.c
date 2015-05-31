@@ -28,7 +28,6 @@ int getNewGlobalAddr(int func_in_use, Sym s[], int * indexTab) {
     int i, new_addr = PARAMETER_SPACE + 1;
     for (i = 0; i < *indexTab; i++) {
         if (s[i].loc_func == -1) {
-//            printf("-(----------------tets= %d\n", s[i].loc_func);
             new_addr++;
         }
     }
@@ -51,7 +50,6 @@ void insert(char * id, int type, int addr, int func_in_use, Sym s[], int * index
             default: n.taille = 0;
         }
         n.addr = addr;
-        //        printf("-----------------%d\n",n.addr);
         s[*indexTab] = n;
         *indexTab += 1;
     }

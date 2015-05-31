@@ -17,21 +17,6 @@ int nb_calls = 0;
 void param_cpy(int src_param[32], int dest_param[32]);
 void restore_regs();
 
-/*
-void restore_caller(){
-        nb_calls--;
-        function_in_use = caller[nb_calls];
-        printf("RESTORE FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);
-}
-
-
-void setFunctionInUse(int loc){
-        function_in_use = loc;
-}
-void init_function_in_use(){
-        function_in_use = nb_function;
-}*/
-
 int get_index_of_args() {
     return index_of_args;
 }
@@ -46,7 +31,6 @@ void push_arg() {
     vm_swap();
     vm_pop();
     vm_save();
-    //vm_push();
 }
 
 void init_param(int func_addr) {
@@ -57,7 +41,6 @@ void init_param(int func_addr) {
             j = i;
         }
     }
-
     for (i = 0; symboles[j].sign.param[i] != -1 && i < 32; i++) {
         vm_set(i + 1);
         vm_swap();
@@ -74,8 +57,6 @@ void print_symbole_debug() {
     for (i = 0; i < NB_SYM; i++) {
         printf("%s\t%d\t%d\t%d\t%d\n", symboles[i].id, symboles[i].addr, symboles[i].type,symboles[i].isconst, symboles[i].loc_func);
     }
-
-    //printf("FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);
 }
 
 int getNbArg(Sym symbole) {
@@ -90,12 +71,6 @@ Sym* getFunction(char * id) {
     int i = 0;
     for (i = 0; i < indexOfSymboles; i++) {
         if (strcmp(symboles[i].id, id) == 0 && symboles[i].id != NULL) {
-            /*
-            caller[nb_calls] = function_in_use;
-            nb_calls++;
-            function_in_use = symboles[i].loc_func;
-	
-            printf("GET FUNC_IN_USE:\t%d\nNB_FUNC:\t%d\n",function_in_use,nb_function);*/
             return &(symboles[i]);
         }
     }
@@ -250,10 +225,6 @@ void switchExpBool() {
 }
 
 int jump_if(void) {
-    //    vm_pop();
-    //    vm_swap();
-    //    vm_pop();
-    //    switchExpBool();
     int ret = jump_label++;
     vm_jumpf(ret);
     return ret;
@@ -268,11 +239,6 @@ int entetfunc(int type, int* types, char * id) {
     insert_function(id, function_in_use, type, types, newLab, symboles, &indexOfSymboles);
     return newLab;
 }
-
-/*
-void incNbFunction() {
-    nb_function++;
-}*/
 
 void set_function_in_use() {
     if (function_in_use < 0)
@@ -453,8 +419,6 @@ int update_tab_value(char * id, int index) {
 }
 
 void insertNewConst(char * id, int isglob,int type) {
-    
-//    printf("---------------------%d\n",isglob);
     vm_alloc(2);
     int newAddr = getNewGlobalAddr(function_in_use, symboles, &indexOfSymboles);
     vm_swap();
