@@ -4,7 +4,7 @@
 #include <unistd.h>
 #include <string.h>
 #include "producer.h"    
-
+#include <fcntl.h>
 
 int yyerror(char*);
 int yylex();
@@ -214,18 +214,69 @@ int yyerror(char* s) {
     return 0;
 }
 
+char* appendTo(char * dest, const char *s) {
+    int sLength = strlen(s);
+    int destLen = strlen(dest);
+ 
+    int totalLength = sLength + destLen;
+    char * strBuf = (char *) malloc(sizeof(char)*(totalLength+1));
+    strcpy(strBuf, dest);
+    strcpy(strBuf + destLen, s);
+    free(dest);
+    return strBuf;
+}
 int main(int argc, char** argv) {
-    allocate_stack();
+    int tempout =0;
+    int oldout= 0;
+    int newout = 0;
     if (argc == 2) {
         yyin = fopen(argv[1], "r");
     } else if (argc == 1) {
+        printf("1\n");
         yyin = stdin;
     } else {
-        fprintf(stderr, "usage: %s [src]\n", argv[0]);
-        return 1;
+         if(argc > 2 ){
+            if( strcmp(argv[2], "-o") == 0){
+                yyin = fopen(argv[1], "r");
+                printf("To file\n"); 
+                char outputname[255];
+                strcpy(outputname, argv[1]);
+                sscanf(argv[1],"%[^.]",outputname);  
+                outputname[strlen(outputname)-4] ='\0';
+                sprintf(outputname,"%s.vm",outputname);
+                tempout = open(outputname, O_RDWR | O_TRUNC | O_CREAT);
+                oldout = dup(1);
+                close(1);
+                newout = dup(tempout);
+            }
+        }
     }
+    allocate_stack();
     yyparse();
     vm_endProgram();
 //    print_symbole_debug();
+    if(argc > 2 ){
+        if( strcmp(argv[2],"-o") == 0){
+            close(tempout);
+            close(1);
+            newout = dup(oldout);
+            close(oldout);
+        }
+    }
     return 0;
 }
+/*
+ 
+ yyin = fopen(argv[1], "r");
+                printf("sd\n"); 
+                char outputname[255];
+                strcpy(outputname, argv[1]);
+                sscanf(argv[1],"%[^.]",outputname);  
+                outputname[strlen(outputname)-4] ='\0';
+                sprintf(outputname,"%s.vm",outputname);
+                tempout = open(outputname, O_RDWR | O_TRUNC | O_CREAT,1);
+                oldout = dup(1);
+                close(1);
+                newout = dup(tempout); /* renvoie 1  
+ 
+ */

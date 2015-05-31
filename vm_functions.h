@@ -45,7 +45,7 @@ void vm_pop();
  */
 void vm_saver();
 /*
- * Place dans reg1 la valeur situee `a l’adresse reg1+base de la pile
+ * Place dans reg1 la valeur situ´ee `a l’adresse reg1 de la pile
  */
 void vm_load();
 /*
@@ -53,7 +53,7 @@ void vm_load();
  */
 void vm_save();
 /*
- * Place dans reg1 la valeur situee `a l’adresse reg1 de la pile
+ * Place dans reg1 la valeur situ´ee `a l’adresse reg1+base de la pile
  */
 void vm_loadr();
 /**
