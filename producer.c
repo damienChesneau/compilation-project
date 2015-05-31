@@ -117,15 +117,16 @@ void insertNewVarTop(char * id, int type) {
 }
 
 void insertNewVar(char * id, int value, int type) {
-    int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
     if (function_in_use == -1) {
-        vm_set(newAddr + PARAMETER_SPACE);
+        int newAddr = getNewGlobalAddr(function_in_use, symboles, &indexOfSymboles);
+        vm_set(newAddr);
         vm_swap();
         vm_set(value);
         vm_alloc(2);
         vm_save();
-        insert(id, type, newAddr + PARAMETER_SPACE, function_in_use, symboles, &indexOfSymboles, 0);
+        insert(id, INTEGER, newAddr, function_in_use, symboles, &indexOfSymboles, 0);
     } else {
+        int newAddr = getNewAddr(function_in_use, symboles, &indexOfSymboles);
         vm_set(newAddr);
         vm_swap();
         vm_set(value);
@@ -451,12 +452,14 @@ int update_tab_value(char * id, int index) {
     return type_of_id;
 }
 
-void insertNewConst(char * id, int isglob) {
+void insertNewConst(char * id, int isglob,int type) {
+    
+//    printf("---------------------%d\n",isglob);
     vm_alloc(2);
-    int newAddr = getNewConstAddr(function_in_use, symboles, &indexOfSymboles);
+    int newAddr = getNewGlobalAddr(function_in_use, symboles, &indexOfSymboles);
     vm_swap();
     vm_set(newAddr);
     vm_swap();
     vm_save();
-    insert(id, INTEGER, newAddr, function_in_use, symboles, &indexOfSymboles, 1);
+    insert(id, type, newAddr, function_in_use, symboles, &indexOfSymboles, 1);
 }

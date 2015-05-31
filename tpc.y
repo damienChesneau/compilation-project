@@ -69,12 +69,12 @@ DeclConst : DeclConst CONST ListConst PV /*For allocate const var, must do SAVE 
     | /*Epsilon */
     ;
     
-ListConst : ListConst VRG IDENT EGAL Litteral { insertNewConst($3,is_glob);  }
-    | IDENT EGAL Litteral { insertNewConst($1,is_glob); }
+ListConst : ListConst VRG IDENT EGAL Litteral {  insertNewConst($3,is_glob,type_of_exp);   type_of_exp=0;}
+    | IDENT EGAL Litteral {  insertNewConst($1,is_glob,type_of_exp);   type_of_exp=0;}
     ;
     
-Litteral : NombreSigne  
-    | CARACTERE { vm_set((int) $1); }
+Litteral : { type_of_exp=1; } NombreSigne  
+    | { type_of_exp=2; } CARACTERE { vm_set($2); }
     ;
     
 NombreSigne : NUM { vm_set($1); }

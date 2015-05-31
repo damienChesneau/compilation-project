@@ -32,7 +32,7 @@ void manage_bope(int bopevalue);
 void insertNewVar(char * id, int value, int type);
 void insertNewTab(char * id, int size, int type, int nbdim);
 int getValueInTab(char * id, int index, int dim);
-void insertNewConst(char * id, int isglob);
+void insertNewConst(char * id, int isglob,int type);
 
 int is_global(char *id);
 void set_function_in_use();

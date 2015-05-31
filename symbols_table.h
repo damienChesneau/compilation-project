@@ -45,5 +45,5 @@ int getValue(char * id, int func_in_use, Sym s[], int * indexTab, int * type, in
  * @return a new addr
  */
 int getNewAddr(int func_in_use, Sym symbol[], int * indexTab);
-int getNewConstAddr(int func_in_use, Sym s[], int * indexTab);
+int getNewGlobalAddr(int func_in_use, Sym s[], int * indexTab);
 #endif

@@ -24,10 +24,11 @@ int getNewAddr(int func_in_use, Sym s[], int * indexTab) {
     return new_addr;
 }
 
-int getNewConstAddr(int func_in_use, Sym s[], int * indexTab) {
+int getNewGlobalAddr(int func_in_use, Sym s[], int * indexTab) {
     int i, new_addr = PARAMETER_SPACE + 1;
     for (i = 0; i < *indexTab; i++) {
-        if (s[i].isconst == 1) {
+        if (s[i].loc_func == -1) {
+//            printf("-(----------------tets= %d\n", s[i].loc_func);
             new_addr++;
         }
     }
